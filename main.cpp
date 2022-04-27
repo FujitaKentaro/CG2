@@ -454,7 +454,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		commandList->ClearRenderTargetView(rtvHandle, clearColor, 0, nullptr);
 
 		if (key[DIK_SPACE]) {
-			FLOAT clearColor[] = { 1.0f,0.25f, 0.0f,0.0f }; // Â‚Á‚Û‚¢F
+			FLOAT clearColor[] = { 1.0f,0.0f, 0.25f,0.0f }; // Â‚Á‚Û‚¢F
 			commandList->ClearRenderTargetView(rtvHandle, clearColor, 0, nullptr);
 		}
 
