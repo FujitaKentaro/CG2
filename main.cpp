@@ -568,7 +568,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 #pragma endregion ウィンドウメッセージ処理
 
 		//DirectX毎フレーム処理　ここから
-#pragma region DirectX毎フレーム処理　
+#pragma region DirectX毎フレーム処理
 
 		//キーボード情報の取得開始
 		keyboard->Acquire();
