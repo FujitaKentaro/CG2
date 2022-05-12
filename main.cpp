@@ -97,7 +97,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	ID3D12Device* device = nullptr;
 	IDXGIFactory7* dxgiFactory = nullptr;
 	IDXGISwapChain4* swapChain = nullptr;
-	ID3D12CommandAllocator* commandAllocator = nullptr; 
+	ID3D12CommandAllocator* commandAllocator = nullptr;
 	ID3D12GraphicsCommandList* commandList = nullptr;
 	ID3D12CommandQueue* commandQueue = nullptr;
 	ID3D12DescriptorHeap* rtvHeap = nullptr;
@@ -146,7 +146,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	D3D_FEATURE_LEVEL featureLevel;
 	for (size_t i = 0; i < _countof(levels); i++) {
 		// 採用したアダプターでデバイスを生成
-		result = D3D12CreateDevice(tmpAdapter, levels[i],IID_PPV_ARGS(&device));
+		result = D3D12CreateDevice(tmpAdapter, levels[i], IID_PPV_ARGS(&device));
 		if (result == S_OK) {
 			// デバイスを生成できた時点でループを抜ける
 			featureLevel = levels[i];
@@ -247,13 +247,23 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	//DirectX初期化処理　ここまで
 
 	//描画初期化処理　ここから
-	
+
 	//頂点データ
 	XMFLOAT3 vertices[] = {
 		{-0.5f,-0.5f,0.0f},	//左下
 		{-0.5f,+0.5f,0.0f},	//左上
 		{+0.5f,-0.5f,0.0f},	//右下
+		{+0.5f,+0.5f,0.0f},	//右上
 	};
+
+	// インデックスデータ
+	uint16_t indices[] =
+	{
+		0, 1, 2, // 三角形1つ目
+		1, 2, 3, // 三角形2つ目
+	};
+
+
 	//頂点データの全体サイズ　＝　頂点データ一つ分のサイズ　*　頂点データの要素数
 	UINT sizeVB = static_cast<UINT>(sizeof(XMFLOAT3) * _countof(vertices));
 	//頂点バッファの設定
@@ -268,6 +278,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	resDesc.MipLevels = 1;
 	resDesc.SampleDesc.Count = 1;
 	resDesc.Layout = D3D12_TEXTURE_LAYOUT_ROW_MAJOR;
+
 	//頂点バッファの生成
 	ID3D12Resource* vertBuff = nullptr;
 	result = device->CreateCommittedResource(
@@ -278,10 +289,12 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		nullptr,
 		IID_PPV_ARGS(&vertBuff));
 	assert(SUCCEEDED(result));
+
 	//GPU上のバッファに対応した仮想メモリ（メインメモリ上）を取得
 	XMFLOAT3* vertMap = nullptr;
 	result = vertBuff->Map(0, nullptr, (void**)&vertMap);
 	assert(SUCCEEDED(result));
+
 	//全頂点に対して
 	for (int i = 0; i < _countof(vertices); i++) {
 		vertMap[i] = vertices[i];	//座標をコピー
@@ -356,6 +369,47 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	}, // (1行で書いたほうが見やすい)
 	};
 
+	// インデックスデータ全体のサイズ
+	UINT sizeIB = static_cast<UINT>(sizeof(uint16_t) * _countof(indices));
+
+	// リソース設定
+	resDesc.Dimension = D3D12_RESOURCE_DIMENSION_BUFFER;
+	resDesc.Width = sizeIB;			// インデックス情報が入る分のサイズ
+	resDesc.Height = 1;
+	resDesc.DepthOrArraySize = 1;
+	resDesc.MipLevels = 1;
+	resDesc.SampleDesc.Count = 1;
+	resDesc.Layout = D3D12_TEXTURE_LAYOUT_ROW_MAJOR;
+
+	// インデックスバッファの生成
+	ID3D12Resource* indexBuff = nullptr;
+	result = device->CreateCommittedResource(
+		&heapProp, // ヒープ設定
+		D3D12_HEAP_FLAG_NONE,
+		&resDesc, // リソース設定
+		D3D12_RESOURCE_STATE_GENERIC_READ,
+		nullptr,
+		IID_PPV_ARGS(&indexBuff));
+
+	// インデックスバッファをマッピング
+	uint16_t* indexMap = nullptr;
+	result = indexBuff->Map(0, nullptr, (void**)&indexMap);
+	// 全インデックスに対して
+	for (int i = 0; i < _countof(indices); i++)
+	{
+		indexMap[i] = indices[i];   // インデックスをコピー
+	}
+	// マッピング解除
+	indexBuff->Unmap(0, nullptr);
+
+	// インデックスバッファビューの作成
+	D3D12_INDEX_BUFFER_VIEW ibView{};
+	ibView.BufferLocation = indexBuff->GetGPUVirtualAddress();
+	ibView.Format = DXGI_FORMAT_R16_UINT;
+	ibView.SizeInBytes = sizeIB;
+
+
+
 	// グラフィックスパイプライン設定
 	D3D12_GRAPHICS_PIPELINE_STATE_DESC pipelineDesc{};
 	// シェーダーの設定
@@ -372,12 +426,12 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	pipelineDesc.RasterizerState.FillMode = D3D12_FILL_MODE_SOLID; // ポリゴン内塗りつぶし
 	//pipelineDesc.RasterizerState.FillMode = D3D12_FILL_MODE_WIREFRAME; // ワイヤーフレーム
 	pipelineDesc.RasterizerState.DepthClipEnable = true; // 深度クリッピングを有効に
-	
+
 	//// ブレンドステート
 	//	pipelineDesc.BlendState.RenderTarget[0].RenderTargetWriteMask
 	//		= D3D12_COLOR_WRITE_ENABLE_ALL; 
-	
-	
+
+
 	// レンダーターゲットのブレンド設定
 	D3D12_RENDER_TARGET_BLEND_DESC& blenddesc = pipelineDesc.BlendState.RenderTarget[0];
 	blenddesc.RenderTargetWriteMask = D3D12_COLOR_WRITE_ENABLE_ALL;// RBGA全てのチャンネルを描画
@@ -437,7 +491,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	rootSignatureDesc.pParameters = &rootParam; //ルートパラメータの先頭アドレス
 	rootSignatureDesc.NumParameters = 1;        //ルートパラメータ数
 
-	
+
 	// ルートシグネチャのシリアライズ
 	ID3DBlob* rootSigBlob = nullptr;
 	result = D3D12SerializeRootSignature(&rootSignatureDesc, D3D_ROOT_SIGNATURE_VERSION_1_0,
@@ -485,9 +539,9 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	assert(SUCCEEDED(result));
 
 	// 値を書き込むと自動的に転送される
-	constMapMaterial->color = XMFLOAT4(1, 0, 0, 0.5f);              // RGBAで半透明の赤
+	constMapMaterial->color = XMFLOAT4(1, 1, 1, 1.0f);	// RGBAで半透明の赤
 
-	
+
 
 
 	//描画初期化処理　ここまで
@@ -544,7 +598,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		// 4.描画コマンドここから
 
 
-		
+
 		// ビューポート設定コマンド
 		D3D12_VIEWPORT viewport{};
 		viewport.Width = window_width;
@@ -566,11 +620,12 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		commandList->RSSetScissorRects(1, &scissorRect);
 
 		// パイプラインステートとルートシグネチャの設定コマンド
-		commandList->SetPipelineState(pipelineState); 
+		commandList->SetPipelineState(pipelineState);
 		commandList->SetGraphicsRootSignature(rootSignature);
 
 		// プリミティブ形状の設定コマンド
 		commandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST); // 三角形リスト
+		//commandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP); // 三角形ストリップ
 
 		// 頂点バッファビューの設定コマンド
 		commandList->IASetVertexBuffers(0, 1, &vbView);
@@ -578,10 +633,14 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		// 定数バッファビュー(CBV)の設定コマンド
 		commandList->SetGraphicsRootConstantBufferView(0, constBuffMaterial->GetGPUVirtualAddress());
 
-		// 描画コマンド
-		commandList->DrawInstanced(_countof(vertices), 1, 0, 0); // 全ての頂点を使って描画
-		
-		
+		// インデックスバッファビューの設定コマンド
+		commandList->IASetIndexBuffer(&ibView);
+
+		//// 描画コマンド (頂点バッファのみ)
+		//commandList->DrawInstanced(_countof(vertices), 1, 0, 0); // 全ての頂点を使って描画
+
+		// 描画コマンド （インデックスバッファ＆頂点バッファ）
+		commandList->DrawIndexedInstanced(_countof(indices), 1, 0, 0, 0);
 
 		// 4.描画コマンドここまで
 
