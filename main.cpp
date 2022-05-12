@@ -41,6 +41,8 @@ LRESULT WindowProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam) {
 
 //Windousアプリでのエントリーポイント（main関数）
 int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
+
+#pragma region WindousAPI初期化処理
 	//コンソールへの文字出力
 	OutputDebugStringA("Hello,DirectX!!\n");
 
@@ -80,9 +82,10 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	ShowWindow(hwnd, SW_SHOW);
 
 	MSG msg{};	//メッセージ
+#pragma endregion WindousAPI初期化処理
 
 	//DirectX初期化処理　ここから
-
+#pragma region DirectX初期化処理
 #ifdef _DEBUG
 
 	//デバックレイヤーをオンに
@@ -243,10 +246,11 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		hwnd, DISCL_FOREGROUND | DISCL_NONEXCLUSIVE | DISCL_NOWINKEY);
 	assert(SUCCEEDED(result));
 
-
+#pragma endregion DirectX初期化処理
 	//DirectX初期化処理　ここまで
-
+	
 	//描画初期化処理　ここから
+#pragma region 描画初期化処理
 
 	//頂点データ
 	XMFLOAT3 vertices[] = {
@@ -542,7 +546,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	constMapMaterial->color = XMFLOAT4(1, 1, 1, 1.0f);	// RGBAで半透明の赤
 
 
-
+#pragma endregion 描画初期化処理
 
 	//描画初期化処理　ここまで
 
@@ -550,6 +554,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	//ゲームループ
 	while (true) {
 
+#pragma region ウィンドウメッセージ処理
 		//メッセージがある？
 		if (PeekMessage(&msg, nullptr, 0, 0, PM_REMOVE)) {
 			TranslateMessage(&msg);	//キー入力メッセージの処理
@@ -560,8 +565,10 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		if (msg.message == WM_QUIT) {
 			break;
 		}
+#pragma endregion ウィンドウメッセージ処理
 
 		//DirectX毎フレーム処理　ここから
+#pragma region DirectX毎フレーム処理　
 
 		//キーボード情報の取得開始
 		keyboard->Acquire();
@@ -675,8 +682,12 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		result = commandList->Reset(commandAllocator, nullptr);
 		assert(SUCCEEDED(result));
 
-
+		
+#pragma endregion DirectX毎フレーム処理
 		//DirectX毎フレーム処理　ここまで
+
+
+
 	}
 	//ウィンドウクラスを登録解除
 	UnregisterClass(w.lpszClassName, w.hInstance);
