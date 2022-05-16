@@ -2,6 +2,7 @@
 #include <d3d12.h>
 #include <dxgi1_6.h>
 #include <cassert>
+#include <math.h>
 #include <vector>
 #include <string>
 #include <DirectXMath.h>
@@ -19,6 +20,8 @@ using namespace DirectX;
 
 #pragma comment(lib,"d3d12.lib")
 #pragma comment(lib,"dxgi.lib")
+
+const float PI = 3.141592f;
 
 // 定数バッファ用データ構造体（マテリアル）
 struct ConstBufferDataMaterial {
@@ -147,6 +150,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	};
 
 	D3D_FEATURE_LEVEL featureLevel;
+
 	for (size_t i = 0; i < _countof(levels); i++) {
 		// 採用したアダプターでデバイスを生成
 		result = D3D12CreateDevice(tmpAdapter, levels[i], IID_PPV_ARGS(&device));
@@ -248,7 +252,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 #pragma endregion DirectX初期化処理
 	//DirectX初期化処理　ここまで
-	
+
 	//描画初期化処理　ここから
 #pragma region 描画初期化処理
 
@@ -257,14 +261,24 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		{-0.5f,-0.5f,0.0f},	//左下
 		{-0.5f,+0.5f,0.0f},	//左上
 		{+0.5f,-0.5f,0.0f},	//右下
-		{+0.5f,+0.5f,0.0f},	//右上
+		//{+0.5f,+0.5f,0.0f},	//右上
+	};
+
+	float transformX = 0.0f;
+	float transformY = 0.0f;
+	float rotation = 0.0f;
+	float scale = 1.0f;
+
+	float affin[3][3] = {
+		{1.0f,0.0f,0.0f},
+		{0.0f,1.0f,0.0f},
+		{0.0f,0.0f,1.0f}
 	};
 
 	// インデックスデータ
-	uint16_t indices[] =
-	{
+	uint16_t indices[] = {
 		0, 1, 2, // 三角形1つ目
-		1, 2, 3, // 三角形2つ目
+		//1, 2, 3, // 三角形2つ目
 	};
 
 
@@ -292,17 +306,22 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		D3D12_RESOURCE_STATE_GENERIC_READ,
 		nullptr,
 		IID_PPV_ARGS(&vertBuff));
+
 	assert(SUCCEEDED(result));
 
 	//GPU上のバッファに対応した仮想メモリ（メインメモリ上）を取得
 	XMFLOAT3* vertMap = nullptr;
 	result = vertBuff->Map(0, nullptr, (void**)&vertMap);
+
 	assert(SUCCEEDED(result));
 
-	//全頂点に対して
-	for (int i = 0; i < _countof(vertices); i++) {
-		vertMap[i] = vertices[i];	//座標をコピー
-	}
+
+
+	////全頂点に対して
+	//for (int i = 0; i < _countof(vertices); i++) {
+	//	vertMap[i] = vertices[i];	//座標をコピー
+	//}
+
 	//繋がりを解除
 	vertBuff->Unmap(0, nullptr);
 	//頂点バッファビューの作成
@@ -526,8 +545,9 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	cbResourceDesc.SampleDesc.Count = 1;
 	cbResourceDesc.Layout = D3D12_TEXTURE_LAYOUT_ROW_MAJOR;
 
-	ID3D12Resource* constBuffMaterial = nullptr;
+
 	// 定数バッファの生成
+	ID3D12Resource* constBuffMaterial = nullptr;
 	result = device->CreateCommittedResource(
 		&cbHeapProp, // ヒープ設定
 		D3D12_HEAP_FLAG_NONE,
@@ -573,8 +593,86 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		//キーボード情報の取得開始
 		keyboard->Acquire();
 		//全キーの入力状態を取得する
-		BYTE key[256] = {};
-		keyboard->GetDeviceState(sizeof(key), key);
+		BYTE keys[256] = {};
+		keyboard->GetDeviceState(sizeof(keys), keys);
+
+		// 更新処理
+#pragma region 更新処理
+
+		transformX = 0.0f;
+		transformY = 0.0f;
+		rotation = 0.0f;
+		scale = 1.0f;
+
+
+		//平行移動
+		if (keys[DIK_W]) {
+			transformY += 0.05f;
+		}
+
+		if (keys[DIK_S]) {
+			transformY -= 0.05f;
+		}
+
+		if (keys[DIK_A]) {
+			transformX -= 0.05f;
+		}
+
+		if (keys[DIK_D]) {
+			transformX += 0.05f;
+		}
+		// 拡大縮小
+		if (keys[DIK_Z]) {
+			scale -= 0.1f;
+		}
+
+		if (keys[DIK_C]) {
+			scale += 0.1f;
+		}
+
+		// 回転
+		if (keys[DIK_Q]) {
+			rotation -= PI / 32;
+		}
+
+		if (keys[DIK_E]) {
+			rotation += PI / 32;
+		}
+
+		//アフィン行列の生成
+		affin[0][0] = scale * cos(rotation);
+		affin[0][1] = scale * (-sin(rotation));
+		affin[0][2] = transformX;
+
+		affin[1][0] = scale * sin(rotation);
+		affin[1][1] = scale * cos(rotation);
+		affin[1][2] = transformY;
+
+		affin[2][0] = 0.0f;
+		affin[2][1] = 0.0f;
+		affin[2][2] = 1.0f;
+
+
+		// アフィン変換
+		for (int i = 0; i < _countof(vertices); i++) {
+			vertices[i].x = vertices[i].x * affin[0][0] +
+				vertices[i].y * affin[0][1] + 1.0f * affin[0][2];
+			vertices[i].y = vertices[i].x * affin[1][0] +
+				vertices[i].y * affin[1][1] + 1.0f * affin[1][2];
+			vertices[i].z = vertices[i].x * affin[2][0] +
+				vertices[i].y * affin[2][1] + 1.0f * affin[2][2];
+		}
+
+
+
+		//全頂点に対して
+		for (int i = 0; i < _countof(vertices); i++) {
+			vertMap[i] = vertices[i];	//座標をコピー
+		}
+
+#pragma endregion 更新処理
+
+
 
 		// バックバッファの番号を取得(2つなので0番か1番)
 		UINT bbIndex = swapChain->GetCurrentBackBufferIndex();
@@ -597,7 +695,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		FLOAT clearColor[] = { 0.1f,0.25f, 0.5f,0.0f }; // 青っぽい色
 		commandList->ClearRenderTargetView(rtvHandle, clearColor, 0, nullptr);
 
-		if (key[DIK_SPACE]) {
+		if (keys[DIK_SPACE]) {
 			FLOAT clearColor[] = { 1.0f,0.25f, 0.0f,0.0f }; // 青っぽい色
 			commandList->ClearRenderTargetView(rtvHandle, clearColor, 0, nullptr);
 		}
@@ -631,8 +729,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		commandList->SetGraphicsRootSignature(rootSignature);
 
 		// プリミティブ形状の設定コマンド
-		commandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST); // 三角形リスト
-		//commandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP); // 三角形ストリップ
+		//commandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST); // 三角形リスト
+		commandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP); // 三角形ストリップ
 
 		// 頂点バッファビューの設定コマンド
 		commandList->IASetVertexBuffers(0, 1, &vbView);
@@ -642,6 +740,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 		// インデックスバッファビューの設定コマンド
 		commandList->IASetIndexBuffer(&ibView);
+
+
 
 		//// 描画コマンド (頂点バッファのみ)
 		//commandList->DrawInstanced(_countof(vertices), 1, 0, 0); // 全ての頂点を使って描画
@@ -682,11 +782,9 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		result = commandList->Reset(commandAllocator, nullptr);
 		assert(SUCCEEDED(result));
 
-		
+
 #pragma endregion DirectX毎フレーム処理
-		//DirectX毎フレーム処理　ここまで
-
-
+		//DirectX毎フレーム処理　ここまで		
 
 	}
 	//ウィンドウクラスを登録解除
