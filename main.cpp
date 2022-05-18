@@ -43,8 +43,9 @@ LRESULT WindowProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam) {
 int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 #pragma region WindousAPI初期化処理
+
 	//コンソールへの文字出力
-	OutputDebugStringA("Hello,DirectX!!\n");
+	//OutputDebugStringA("Hello,DirectX!!\n");
 
 	//ウィンドウサイズ
 	const int window_width = 1280;	//横幅
@@ -252,24 +253,48 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	//描画初期化処理　ここから
 #pragma region 描画初期化処理
 
-	//頂点データ
-	XMFLOAT3 vertices[] = {
-		{-0.5f,-0.5f,0.0f},	//左下
-		{-0.5f,+0.5f,0.0f},	//左上
-		{+0.5f,-0.5f,0.0f},	//右下
-		{+0.5f,+0.5f,0.0f},	//右上
+	struct Vertex {
+		XMFLOAT3 pos;	// xyz座標
+
+		XMFLOAT2 uv;	// uv座標
+
+
+
+
+
+	};
+
+	// 頂点データ
+	Vertex vertices[] = {
+		// x      y     z       u     v
+		{{-0.4f, -0.7f, 0.0f}, {0.0f, 1.0f}}, // 左下
+		{{-0.4f, +0.7f, 0.0f}, {0.0f, 0.0f}}, // 左上
+		{{+0.4f, -0.7f, 0.0f}, {1.0f, 1.0f}}, // 右下
+		{{+0.4f, +0.7f, 0.0f}, {1.0f, 0.0f}}, // 右上
 	};
 
 	// インデックスデータ
-	uint16_t indices[] =
-	{
+	unsigned short indices[] = {
 		0, 1, 2, // 三角形1つ目
 		1, 2, 3, // 三角形2つ目
 	};
 
+	float transformX = 0.0f;
+	float transformY = 0.0f;
+	float rotation = 0.0f;
+	float scale = 1.0f;
+
+	float affin[3][3] = {
+		{1.0f,0.0f,0.0f},
+		{0.0f,1.0f,0.0f},
+		{0.0f,0.0f,1.0f}
+	};
+
+
+
 
 	//頂点データの全体サイズ　＝　頂点データ一つ分のサイズ　*　頂点データの要素数
-	UINT sizeVB = static_cast<UINT>(sizeof(XMFLOAT3) * _countof(vertices));
+	UINT sizeVB = static_cast<UINT>(sizeof(vertices[0]) * _countof(vertices));
 	//頂点バッファの設定
 	D3D12_HEAP_PROPERTIES heapProp{};		//ヒープ設定
 	heapProp.Type = D3D12_HEAP_TYPE_UPLOAD;	//GPUへの転送用
@@ -295,7 +320,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	assert(SUCCEEDED(result));
 
 	//GPU上のバッファに対応した仮想メモリ（メインメモリ上）を取得
-	XMFLOAT3* vertMap = nullptr;
+	Vertex* vertMap = nullptr;
 	result = vertBuff->Map(0, nullptr, (void**)&vertMap);
 	assert(SUCCEEDED(result));
 
@@ -312,7 +337,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	//頂点バッファのサイズ
 	vbView.SizeInBytes = sizeVB;
 	//頂点一つ分のデータサイズ
-	vbView.StrideInBytes = sizeof(XMFLOAT3);
+	vbView.StrideInBytes = sizeof(vertices[0]);
 	ID3DBlob* vsBlob = nullptr;		//頂点シェーダオブジェクト
 	ID3DBlob* psBlob = nullptr;		//ピクセルシェーダオブジェクト
 	ID3DBlob* errorBlob = nullptr;	//エラーオブジェクト
@@ -366,11 +391,16 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	}
 	// 頂点レイアウト
 	D3D12_INPUT_ELEMENT_DESC inputLayout[] = {
-	{
+	{ // xyz(1行で書いたほうが見やすい)
 	"POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0,
 	D3D12_APPEND_ALIGNED_ELEMENT,
 	D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0
-	}, // (1行で書いたほうが見やすい)
+	},
+	{ //uv座標(1行で書いたほうが見やすい)
+	"TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0,
+	D3D12_APPEND_ALIGNED_ELEMENT,
+	D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0
+	},
 	};
 
 	// インデックスデータ全体のサイズ
@@ -471,6 +501,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	pipelineDesc.InputLayout.pInputElementDescs = inputLayout;
 	pipelineDesc.InputLayout.NumElements = _countof(inputLayout);
 
+
 	// 図形の形状設定
 	pipelineDesc.PrimitiveTopologyType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE;
 
@@ -570,12 +601,6 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		//DirectX毎フレーム処理　ここから
 #pragma region DirectX毎フレーム処理
 
-		//キーボード情報の取得開始
-		keyboard->Acquire();
-		//全キーの入力状態を取得する
-		BYTE key[256] = {};
-		keyboard->GetDeviceState(sizeof(key), key);
-
 		// バックバッファの番号を取得(2つなので0番か1番)
 		UINT bbIndex = swapChain->GetCurrentBackBufferIndex();
 
@@ -597,10 +622,100 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		FLOAT clearColor[] = { 0.1f,0.25f, 0.5f,0.0f }; // 青っぽい色
 		commandList->ClearRenderTargetView(rtvHandle, clearColor, 0, nullptr);
 
-		if (key[DIK_SPACE]) {
-			FLOAT clearColor[] = { 1.0f,0.25f, 0.0f,0.0f }; // 青っぽい色
-			commandList->ClearRenderTargetView(rtvHandle, clearColor, 0, nullptr);
+
+		//キーボード情報の取得開始
+		keyboard->Acquire();
+		//全キーの入力状態を取得する
+		BYTE keys[256] = {};
+		keyboard->GetDeviceState(sizeof(keys), keys);
+
+		// 更新処理
+#pragma region キーボード情報の取得
+
+		transformX = 0.0f;
+		transformY = 0.0f;
+		rotation = 0.0f;
+		scale = 1.0f;
+
+
+		//平行移動
+		if (keys[DIK_W]) {
+			transformY += 0.05f;
 		}
+
+		if (keys[DIK_S]) {
+			transformY -= 0.05f;
+		}
+
+		if (keys[DIK_A]) {
+			transformX -= 0.05f;
+		}
+
+		if (keys[DIK_D]) {
+			transformX += 0.05f;
+		}
+		// 拡大縮小
+		if (keys[DIK_Z]) {
+			scale -= 0.1f;
+		}
+
+		if (keys[DIK_C]) {
+			scale += 0.1f;
+		}
+
+		// 回転
+		if (keys[DIK_Q]) {
+			rotation -= PI / 32;
+		}
+
+		if (keys[DIK_E]) {
+			rotation += PI / 32;
+		}
+
+		//アフィン行列の生成
+		affin[0][0] = scale * cos(rotation);
+		affin[0][1] = scale * (-sin(rotation));
+		affin[0][2] = transformX;
+
+		affin[1][0] = scale * sin(rotation);
+		affin[1][1] = scale * cos(rotation);
+		affin[1][2] = transformY;
+
+		affin[2][0] = 0.0f;
+		affin[2][1] = 0.0f;
+		affin[2][2] = 1.0f;
+
+
+		//// アフィン変換
+		//for (int i = 0; i < _countof(vertices); i++) {
+		//	vertices[i].x = vertices[i].x * affin[0][0] +
+		//		vertices[i].y * affin[0][1] + 1.0f * affin[0][2];
+		//	vertices[i].y = vertices[i].x * affin[1][0] +
+		//		vertices[i].y * affin[1][1] + 1.0f * affin[1][2];
+		//	vertices[i].z = vertices[i].x * affin[2][0] +
+		//		vertices[i].y * affin[2][1] + 1.0f * affin[2][2];
+		//}
+
+
+
+		//全頂点に対して
+		for (int i = 0; i < _countof(vertices); i++) {
+			vertMap[i] = vertices[i];	//座標をコピー
+		}
+
+#pragma endregion 更新処理
+
+
+		//if (keys[DIK_SPACE]) {
+		//	FLOAT clearColor[] = { 1.0f,0.25f, 0.0f,0.0f }; // 青っぽい色
+		//	commandList->ClearRenderTargetView(rtvHandle, clearColor, 0, nullptr);
+		//}
+
+
+#pragma endregion DirectX毎フレーム処理
+		//DirectX毎フレーム処理　ここまで	
+
+
 
 		// 4.描画コマンドここから
 
@@ -682,9 +797,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		result = commandList->Reset(commandAllocator, nullptr);
 		assert(SUCCEEDED(result));
 
-		
-#pragma endregion DirectX毎フレーム処理
-		//DirectX毎フレーム処理　ここまで
+
+
 
 
 
