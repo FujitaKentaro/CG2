@@ -1,29 +1,6 @@
-#include <Windows.h>
-#include <d3d12.h>
-#include <dxgi1_6.h>
-#include <cassert>
-#include <vector>
-#include <string>
-#include <DirectXMath.h>
-#include <d3dcompiler.h>
-#include <dinput.h>
-#include <DirectXTex.h>
-
-#define DIRECTINPUT_VERSION		0x0800		//DirectInputのバージョン指定
-
-#pragma comment(lib,"d3dcompiler.lib")
-#pragma comment(lib,"dinput8.lib")
-#pragma comment(lib,"dxguid.lib")
-#pragma comment(lib,"d3d12.lib")
-#pragma comment(lib,"dxgi.lib")
-
-using namespace DirectX;
-const float PI = 3.141592f;
-
-// 定数バッファ用データ構造体（マテリアル）
-struct ConstBufferDataMaterial {
-	XMFLOAT4 color; // 色 (RGBA)
-};
+#include "World.h"
+//#include "Object.h"
+#include "Triangle.h"
 
 LRESULT WindowProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam) {
 	//メッセージに応じてゲーム固有の処理を行う
@@ -47,9 +24,6 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	//コンソールへの文字出力
 	//OutputDebugStringA("Hello,DirectX!!\n");
 
-	//ウィンドウサイズ
-	const int window_width = 1280;	//横幅
-	const int window_height = 720;	//縦幅
 
 	//ウィンドウクラスの設定
 	WNDCLASSEX w{};
@@ -253,26 +227,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	//描画初期化処理　ここから
 #pragma region 描画初期化処理
 
-	struct Vertex {
-		XMFLOAT3 pos;	// xyz座標
-
-		XMFLOAT2 uv;	// uv座標
-	};
-
-	// 頂点データ
-	Vertex vertices[] = {
-		// x      y     z       u     v
-		{{-0.4f, -0.7f, 0.0f}, {0.0f, 1.0f}}, // 左下
-		{{-0.4f, +0.7f, 0.0f}, {0.0f, 0.0f}}, // 左上
-		{{+0.4f, -0.7f, 0.0f}, {1.0f, 1.0f}}, // 右下
-		{{+0.4f, +0.7f, 0.0f}, {1.0f, 0.0f}}, // 右上
-	};
-
-	// インデックスデータ
-	unsigned short indices[] = {
-		0, 1, 2, // 三角形1つ目
-		1, 2, 3, // 三角形2つ目
-	};
+	/*
 
 	float transformX = 0.0f;
 	float transformY = 0.0f;
@@ -284,9 +239,34 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		{0.0f,1.0f,0.0f},
 		{0.0f,0.0f,1.0f}
 	};
+	*/
+	Vertex vertex[10][3];
+	for (int i = 0; i < 10; i++) {
+		
+			vertex[i][0] = {
+				{ -0.7f + (i % 2) * 1.0f, 0.6f - (i / 2) * 0.4f, 0.0f}, {0.0f, 1.0f}, // 左下				
+			};
+			vertex[i][1] = {
+				{-0.7f + (i % 2) * 1.0f, 0.9f - (i / 2) * 0.4f, 0.0f}, { 0.0f, 0.0f }, // 左上		
+			};
+			vertex[i][2] = {
+				{-0.52f + (i % 2) * 1.0f, 0.6f - (i / 2) * 0.4f, 0.0f }, { 1.0f, 1.0f } // 右下
+			};
+	}
+
+	Triangle* triangle[10];	
+	for (int i = 0; i < 10; i++)
+	{
+		triangle[i] = new Triangle(vertex[i]);
+	}
+
+	for (int i = 0; i < 10; i++)
+	{
+		triangle[i]->Init(device);
+	}
 
 
-
+	/*
 
 	//頂点データの全体サイズ　＝　頂点データ一つ分のサイズ　*　頂点データの要素数
 	UINT sizeVB = static_cast<UINT>(sizeof(vertices[0]) * _countof(vertices));
@@ -458,7 +438,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 	//// ブレンドステート
 	//	pipelineDesc.BlendState.RenderTarget[0].RenderTargetWriteMask
-	//		= D3D12_COLOR_WRITE_ENABLE_ALL; 
+	//		= D3D12_COLOR_WRITE_ENABLE_ALL;
 
 
 	// レンダーターゲットのブレンド設定
@@ -699,7 +679,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 	// シェーダリソースビュー設定
 	D3D12_SHADER_RESOURCE_VIEW_DESC srvDesc{};			// 設定構造体
-	srvDesc.Format = resDesc.Format;	// 
+	srvDesc.Format = resDesc.Format;	//
 	srvDesc.Shader4ComponentMapping =
 		D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
 	srvDesc.ViewDimension = D3D12_SRV_DIMENSION_TEXTURE2D;// 2Dテクスチャ
@@ -707,17 +687,19 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 	// ハンドルの指す位置にシェーダーリソースビュー作成
 	device->CreateShaderResourceView(texBuff, &srvDesc, srvHandle);
-
+*/
 
 #pragma endregion シェーダリソースビュー
 
 
 #pragma endregion 描画初期化処理
 
-	//描画初期化処理　ここまで
 
 
-	//ゲームループ
+//描画初期化処理　ここまで
+
+
+//ゲームループ
 	while (true) {
 
 #pragma region ウィンドウメッセージ処理
@@ -767,58 +749,58 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		// 更新処理
 #pragma region キーボード情報の取得
 
-		transformX = 0.0f;
-		transformY = 0.0f;
-		rotation = 0.0f;
-		scale = 1.0f;
+		//transformX = 0.0f;
+		//transformY = 0.0f;
+		//rotation = 0.0f;
+		//scale = 1.0f;
 
 
-		//平行移動
-		if (keys[DIK_W]) {
-			transformY += 0.05f;
-		}
+		////平行移動
+		//if (keys[DIK_W]) {
+		//	transformY += 0.05f;
+		//}
 
-		if (keys[DIK_S]) {
-			transformY -= 0.05f;
-		}
+		//if (keys[DIK_S]) {
+		//	transformY -= 0.05f;
+		//}
 
-		if (keys[DIK_A]) {
-			transformX -= 0.05f;
-		}
+		//if (keys[DIK_A]) {
+		//	transformX -= 0.05f;
+		//}
 
-		if (keys[DIK_D]) {
-			transformX += 0.05f;
-		}
-		// 拡大縮小
-		if (keys[DIK_Z]) {
-			scale -= 0.1f;
-		}
+		//if (keys[DIK_D]) {
+		//	transformX += 0.05f;
+		//}
+		//// 拡大縮小
+		//if (keys[DIK_Z]) {
+		//	scale -= 0.1f;
+		//}
 
-		if (keys[DIK_C]) {
-			scale += 0.1f;
-		}
+		//if (keys[DIK_C]) {
+		//	scale += 0.1f;
+		//}
 
-		// 回転
-		if (keys[DIK_Q]) {
-			rotation -= PI / 32;
-		}
+		//// 回転
+		//if (keys[DIK_Q]) {
+		//	rotation -= PI / 32;
+		//}
 
-		if (keys[DIK_E]) {
-			rotation += PI / 32;
-		}
+		//if (keys[DIK_E]) {
+		//	rotation += PI / 32;
+		//}
 
-		//アフィン行列の生成
-		affin[0][0] = scale * cos(rotation);
-		affin[0][1] = scale * (-sin(rotation));
-		affin[0][2] = transformX;
+		////アフィン行列の生成
+		//affin[0][0] = scale * cos(rotation);
+		//affin[0][1] = scale * (-sin(rotation));
+		//affin[0][2] = transformX;
 
-		affin[1][0] = scale * sin(rotation);
-		affin[1][1] = scale * cos(rotation);
-		affin[1][2] = transformY;
+		//affin[1][0] = scale * sin(rotation);
+		//affin[1][1] = scale * cos(rotation);
+		//affin[1][2] = transformY;
 
-		affin[2][0] = 0.0f;
-		affin[2][1] = 0.0f;
-		affin[2][2] = 1.0f;
+		//affin[2][0] = 0.0f;
+		//affin[2][1] = 0.0f;
+		//affin[2][2] = 1.0f;
 
 
 		//// アフィン変換
@@ -833,12 +815,18 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 
 
-		//全頂点に対して
-		for (int i = 0; i < _countof(vertices); i++) {
-			vertMap[i] = vertices[i];	//座標をコピー
-		}
+		////全頂点に対して
+		//for (int i = 0; i < _countof(vertices); i++) {
+		//	vertMap[i] = vertices[i];	//座標をコピー
+		//}
 
 #pragma endregion 更新処理
+
+
+		for (int i = 0; i < 10; i++)
+		{
+			triangle[i]->Update(device);
+		}
 
 
 		//if (keys[DIK_SPACE]) {
@@ -848,8 +836,10 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 
 #pragma endregion DirectX毎フレーム処理
-		//DirectX毎フレーム処理　ここまで	
+		//DirectX毎フレーム処理　ここまで
 
+
+		//---------------------------------------------------
 
 
 		// 4.描画コマンドここから
@@ -875,6 +865,37 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		scissorRect.bottom = scissorRect.top + window_height;	// 切り抜き座標下
 		// シザー矩形設定コマンドを、コマンドリストに積む
 		commandList->RSSetScissorRects(1, &scissorRect);
+
+
+
+		for (int i = 0; i < 10; i++)
+		{
+			triangle[i]->Draw(commandList);
+
+		}
+
+		/*
+		// ビューポート設定コマンド
+		D3D12_VIEWPORT viewport{};
+		viewport.Width = window_width;
+		viewport.Height = window_height;
+		viewport.TopLeftX = 0;
+		viewport.TopLeftY = 0;
+		viewport.MinDepth = 0.0f;
+		viewport.MaxDepth = 1.0f;
+		// ビューポート設定コマンドを、コマンドリストに積む
+		commandList->RSSetViewports(1, &viewport);
+
+		// シザー矩形
+		D3D12_RECT scissorRect{};
+		scissorRect.left = 0;								// 切り抜き座標左
+		scissorRect.right = window_width;					// 切り抜き座標右
+		scissorRect.top = 0;									// 切り抜き座標上
+		scissorRect.bottom = scissorRect.top + window_height;	// 切り抜き座標下
+		// シザー矩形設定コマンドを、コマンドリストに積む
+		commandList->RSSetScissorRects(1, &scissorRect);
+
+
 
 		// パイプラインステートとルートシグネチャの設定コマンド
 		commandList->SetPipelineState(pipelineState);
@@ -906,7 +927,12 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		// 描画コマンド （インデックスバッファ＆頂点バッファ）
 		commandList->DrawIndexedInstanced(_countof(indices), 1, 0, 0, 0);
 
+
+
 		// 4.描画コマンドここまで
+
+		*/
+
 
 		// 5.リソースバリアを戻す
 		barrierDesc.Transition.StateBefore = D3D12_RESOURCE_STATE_RENDER_TARGET;		// 描画状態から
@@ -939,15 +965,14 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		result = commandList->Reset(commandAllocator, nullptr);
 		assert(SUCCEEDED(result));
 
-
-
-
-
-
 	}
 	//ウィンドウクラスを登録解除
 	UnregisterClass(w.lpszClassName, w.hInstance);
 
+
+	for (int i = 0; i < 10; i++) {
+		delete triangle[i];
+	}
 
 	return 0;
 }
