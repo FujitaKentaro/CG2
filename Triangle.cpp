@@ -366,13 +366,29 @@ void Triangle::Init(ID3D12Device* device) {
 		result = constBuffTransform->Map(0, nullptr, (void**)&constMapTransform); // マッピング
 		assert(SUCCEEDED(result));
 
+
+	//平行投影変換
 		// 単位行列を代入
 		constMapTransform->mat = XMMatrixIdentity();
 
-		constMapTransform->mat.r[0].m128_f32[0] = 2.0f/window_width;
+		constMapTransform->mat = XMMatrixOrthographicOffCenterLH(
+			2.0f / window_width, window_width,
+			window_height, -2.0f / window_height,
+			0.0f,1.0f
+		);
+		/*constMapTransform->mat.r[0].m128_f32[0] = 2.0f/window_width;
 		constMapTransform->mat.r[1].m128_f32[1] = -2.0f / window_height;
 		constMapTransform->mat.r[3].m128_f32[0] = -1.0f;
-		constMapTransform->mat.r[3].m128_f32[1] = 1.0f;
+		constMapTransform->mat.r[3].m128_f32[1] = 1.0f;*/
+
+	//透視投影変換
+		// 透視投影変換行列の計算
+		constMapTransform->mat = XMMatrixPerspectiveFovLH(
+			XMConvertToRadians(45.0f),				// 上下画角45度
+			(float)window_width / window_height,	// アスペクト比 （ 画面横幅/画面縦幅 ）
+			0.1f, 1000.0f							// 前端、奥端
+		);
+
 	}
 
 #pragma region 画像イメージデータの作成

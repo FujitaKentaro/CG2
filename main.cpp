@@ -226,42 +226,27 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	//描画初期化処理　ここから
 #pragma region 描画初期化処理
 
-	/*
-
-	float transformX = 0.0f;
-	float transformY = 0.0f;
-	float rotation = 0.0f;
-	float scale = 1.0f;
-
-	float affin[3][3] = {
-		{1.0f,0.0f,0.0f},
-		{0.0f,1.0f,0.0f},
-		{0.0f,0.0f,1.0f}
-	};
-	*/
-	Vertex vertex[4];
-	
+	//頂点
+	Vertex vertex[4];	
 		
 			vertex[0] = {
-				{0.0f ,100.0f, 0.0f}, {0.0f, 1.0f}, // 左下				
+				{-50.0f ,-50.0f, 50.0f}, {0.0f, 1.0f}, // 左下				
 			};
 			vertex[1] = {
-				{0.0f,0.0f, 0.0f}, { 0.0f, 0.0f }, // 左上		
+				{-50.0f,50.0f, 50.0f}, { 0.0f, 0.0f }, // 左上		
 			};
 			vertex[2] = {
-				{100.0f,100.0f, 0.0f }, { 1.0f, 1.0f } // 右下
+				{50.0f,-50.0f, 50.0f }, { 1.0f, 1.0f } // 右下
 			};
 			vertex[3] = {
-				{100.0f,0.0f, 0.0f }, { 1.0f, 0.0f } // 右上
+				{50.0f, 50.0f, 50.0f }, { 1.0f, 0.0f } // 右上
 			};
 	
-
+	//三角形生成
 	Triangle* triangle;	
 	
 		triangle = new Triangle(vertex);
-	
 
-	
 		triangle->Init(device);
 	
 
