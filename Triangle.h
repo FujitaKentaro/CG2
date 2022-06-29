@@ -19,8 +19,11 @@ public:
 	ID3D12RootSignature* rootSignature = nullptr;
 	// パイプランステートの生成
 	ID3D12PipelineState* pipelineState = nullptr;
-
+	// 定数バッファ
 	ID3D12Resource* constBuffMaterial = nullptr;
+	//ID3D12Resource* constBuffTransform = nullptr;
+	//ConstBufferDataTransform* constMapTransform = nullptr;
+
 	//GPU上のバッファに対応した仮想メモリ
 	Vertex* vertMap = nullptr;
 	// 設定を元にSRV用デスクリプタヒープを生成

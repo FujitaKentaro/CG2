@@ -141,8 +141,10 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="Affin.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="math\Affin.cpp" />
+    <ClCompile Include="math\Matrix4.cpp" />
+    <ClCompile Include="math\Vector3.cpp" />
     <ClCompile Include="Triangle.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -168,7 +170,9 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Affin.h" />
+    <ClInclude Include="math\Affin.h" />
+    <ClInclude Include="math\Matrix4.h" />
+    <ClInclude Include="math\Vector3.h" />
     <ClInclude Include="Triangle.h" />
     <ClInclude Include="World.h" />
   </ItemGroup>
