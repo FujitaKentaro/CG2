@@ -382,12 +382,24 @@ void Triangle::Init(ID3D12Device* device) {
 		constMapTransform->mat.r[3].m128_f32[1] = 1.0f;*/
 
 	//透視投影変換
-		// 透視投影変換行列の計算
-		constMapTransform->mat = XMMatrixPerspectiveFovLH(
+		// 射影変換行列の計算
+		XMMATRIX matProjection =
+		XMMatrixPerspectiveFovLH(
 			XMConvertToRadians(45.0f),				// 上下画角45度
 			(float)window_width / window_height,	// アスペクト比 （ 画面横幅/画面縦幅 ）
 			0.1f, 1000.0f							// 前端、奥端
 		);
+		
+		// ビュー変換行列
+		XMMATRIX matView;
+		XMFLOAT3 eye(0, 0, -100);	// 視点座標
+		XMFLOAT3 target(0, 0, 0);	// 注視点座標
+		XMFLOAT3 up(0, 1, 0);		// 上方向ベクトル
+		matView = XMMatrixLookAtLH(XMLoadFloat3(&eye), XMLoadFloat3(&target), XMLoadFloat3(&up));
+
+
+	// 定数バッファに転送
+		constMapTransform->mat = matView*matProjection;
 
 	}
 
