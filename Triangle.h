@@ -21,8 +21,8 @@ public:
 	ID3D12PipelineState* pipelineState = nullptr;
 	// 定数バッファ
 	ID3D12Resource* constBuffMaterial = nullptr;
-	//ID3D12Resource* constBuffTransform = nullptr;
-	//ConstBufferDataTransform* constMapTransform = nullptr;
+	ID3D12Resource* constBuffTransform = nullptr;
+	ConstBufferDataTransform* constMapTransform = nullptr;
 
 	//GPU上のバッファに対応した仮想メモリ
 	Vertex* vertMap = nullptr;
@@ -32,9 +32,9 @@ public:
 public:
 
 	// 頂点データ
-	Vertex vertices[3] ;
+	Vertex vertices[4] ;
 	// インデックスデータ
-	unsigned short indices[3]={0,1,2};
+	unsigned short indices[6]={0,1,2,1,2,3};
 
 public:	
 	

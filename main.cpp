@@ -1,5 +1,4 @@
 #include "World.h"
-//#include "Object.h"
 #include "Triangle.h"
 
 LRESULT WindowProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam) {
@@ -240,30 +239,31 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		{0.0f,0.0f,1.0f}
 	};
 	*/
-	Vertex vertex[10][3];
-	for (int i = 0; i < 10; i++) {
+	Vertex vertex[4];
+	
 		
-			vertex[i][0] = {
-				{ -0.7f + (i % 2) * 1.0f, 0.6f - (i / 2) * 0.4f, 0.0f}, {0.0f, 1.0f}, // 左下				
+			vertex[0] = {
+				{0.0f ,100.0f, 0.0f}, {0.0f, 1.0f}, // 左下				
 			};
-			vertex[i][1] = {
-				{-0.7f + (i % 2) * 1.0f, 0.9f - (i / 2) * 0.4f, 0.0f}, { 0.0f, 0.0f }, // 左上		
+			vertex[1] = {
+				{0.0f,0.0f, 0.0f}, { 0.0f, 0.0f }, // 左上		
 			};
-			vertex[i][2] = {
-				{-0.52f + (i % 2) * 1.0f, 0.6f - (i / 2) * 0.4f, 0.0f }, { 1.0f, 1.0f } // 右下
+			vertex[2] = {
+				{100.0f,100.0f, 0.0f }, { 1.0f, 1.0f } // 右下
 			};
-	}
+			vertex[3] = {
+				{100.0f,0.0f, 0.0f }, { 1.0f, 0.0f } // 右上
+			};
+	
 
-	Triangle* triangle[10];	
-	for (int i = 0; i < 10; i++)
-	{
-		triangle[i] = new Triangle(vertex[i]);
-	}
+	Triangle* triangle;	
+	
+		triangle = new Triangle(vertex);
+	
 
-	for (int i = 0; i < 10; i++)
-	{
-		triangle[i]->Init(device);
-	}
+	
+		triangle->Init(device);
+	
 
 #pragma endregion シェーダリソースビュー
 
@@ -325,90 +325,17 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		// 更新処理
 #pragma region キーボード情報の取得
 
-		//transformX = 0.0f;
-		//transformY = 0.0f;
-		//rotation = 0.0f;
-		//scale = 1.0f;
-
-
-		////平行移動
-		//if (keys[DIK_W]) {
-		//	transformY += 0.05f;
-		//}
-
-		//if (keys[DIK_S]) {
-		//	transformY -= 0.05f;
-		//}
-
-		//if (keys[DIK_A]) {
-		//	transformX -= 0.05f;
-		//}
-
-		//if (keys[DIK_D]) {
-		//	transformX += 0.05f;
-		//}
-		//// 拡大縮小
-		//if (keys[DIK_Z]) {
-		//	scale -= 0.1f;
-		//}
-
-		//if (keys[DIK_C]) {
-		//	scale += 0.1f;
-		//}
-
-		//// 回転
-		//if (keys[DIK_Q]) {
-		//	rotation -= PI / 32;
-		//}
-
-		//if (keys[DIK_E]) {
-		//	rotation += PI / 32;
-		//}
-
-		////アフィン行列の生成
-		//affin[0][0] = scale * cos(rotation);
-		//affin[0][1] = scale * (-sin(rotation));
-		//affin[0][2] = transformX;
-
-		//affin[1][0] = scale * sin(rotation);
-		//affin[1][1] = scale * cos(rotation);
-		//affin[1][2] = transformY;
-
-		//affin[2][0] = 0.0f;
-		//affin[2][1] = 0.0f;
-		//affin[2][2] = 1.0f;
-
-
-		//// アフィン変換
-		//for (int i = 0; i < _countof(vertices); i++) {
-		//	vertices[i].x = vertices[i].x * affin[0][0] +
-		//		vertices[i].y * affin[0][1] + 1.0f * affin[0][2];
-		//	vertices[i].y = vertices[i].x * affin[1][0] +
-		//		vertices[i].y * affin[1][1] + 1.0f * affin[1][2];
-		//	vertices[i].z = vertices[i].x * affin[2][0] +
-		//		vertices[i].y * affin[2][1] + 1.0f * affin[2][2];
-		//}
-
-
-
-		////全頂点に対して
-		//for (int i = 0; i < _countof(vertices); i++) {
-		//	vertMap[i] = vertices[i];	//座標をコピー
-		//}
+		
 
 #pragma endregion 更新処理
 
 
-		for (int i = 0; i < 10; i++)
-		{
-			triangle[i]->Update(device);
-		}
+		
+			triangle->Update(device);
+		
 
 
-		//if (keys[DIK_SPACE]) {
-		//	FLOAT clearColor[] = { 1.0f,0.25f, 0.0f,0.0f }; // 青っぽい色
-		//	commandList->ClearRenderTargetView(rtvHandle, clearColor, 0, nullptr);
-		//}
+		
 
 
 #pragma endregion DirectX毎フレーム処理
@@ -442,11 +369,9 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 
 
-		for (int i = 0; i < 10; i++)
-		{
-			triangle[i]->Draw(commandList);
+			triangle->Draw(commandList);
 
-		}
+		
 
 		// 5.リソースバリアを戻す
 		barrierDesc.Transition.StateBefore = D3D12_RESOURCE_STATE_RENDER_TARGET;		// 描画状態から
@@ -484,9 +409,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	UnregisterClass(w.lpszClassName, w.hInstance);
 
 
-	for (int i = 0; i < 10; i++) {
-		delete triangle[i];
-	}
+		delete triangle;
+	
 
 	return 0;
 }
