@@ -29,6 +29,14 @@ public:
 	// 設定を元にSRV用デスクリプタヒープを生成
 	ID3D12DescriptorHeap* srvHeap = nullptr;
 
+	// ワールド変換行列
+	XMMATRIX matWorld;
+		
+	//座標
+	XMFLOAT3 scale;
+	XMFLOAT3 position ;
+	XMFLOAT3 rotation;
+
 	// 射影変換行列の計算
 	XMMATRIX matProjection;
 
