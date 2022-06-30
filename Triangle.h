@@ -29,6 +29,17 @@ public:
 	// 設定を元にSRV用デスクリプタヒープを生成
 	ID3D12DescriptorHeap* srvHeap = nullptr;
 
+	// 射影変換行列の計算
+	XMMATRIX matProjection;
+
+	// ビュー変換行列
+	XMMATRIX matView;
+	XMFLOAT3 eye;	// 視点座標
+	XMFLOAT3 target;	// 注視点座標
+	XMFLOAT3 up;		// 上方向ベクトル
+	//カメラの回転核
+	float angle = 0.0f;
+
 public:
 
 	// 頂点データ
@@ -43,6 +54,6 @@ public:
 	~Triangle();
 	
 	void Init(ID3D12Device* device);
-	void Update(ID3D12Device* device);
+	void Update(ID3D12Device* device, BYTE* keys);
 	void Draw( ID3D12GraphicsCommandList* commandList);
 };

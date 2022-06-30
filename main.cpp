@@ -230,16 +230,16 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	Vertex vertex[4];	
 		
 			vertex[0] = {
-				{-50.0f ,-50.0f, 50.0f}, {0.0f, 1.0f}, // 左下				
+				{-50.0f ,-50.0f, 0.0f}, {0.0f, 1.0f}, // 左下				
 			};
 			vertex[1] = {
-				{-50.0f,50.0f, 50.0f}, { 0.0f, 0.0f }, // 左上		
+				{-50.0f,50.0f, 0.0f}, { 0.0f, 0.0f }, // 左上		
 			};
 			vertex[2] = {
-				{50.0f,-50.0f, 50.0f }, { 1.0f, 1.0f } // 右下
+				{50.0f,-50.0f, 0.0f }, { 1.0f, 1.0f } // 右下
 			};
 			vertex[3] = {
-				{50.0f, 50.0f, 50.0f }, { 1.0f, 0.0f } // 右上
+				{50.0f, 50.0f, 0.0f }, { 1.0f, 0.0f } // 右上
 			};
 	
 	//三角形生成
@@ -316,7 +316,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 
 		
-			triangle->Update(device);
+			triangle->Update(device,keys);
 		
 
 

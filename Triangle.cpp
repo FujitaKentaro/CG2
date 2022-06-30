@@ -1,5 +1,5 @@
 #include "Triangle.h"
-#include "World.h"
+
 
 Triangle::Triangle() {
 
@@ -383,23 +383,23 @@ void Triangle::Init(ID3D12Device* device) {
 
 	//透視投影変換
 		// 射影変換行列の計算
-		XMMATRIX matProjection =
+		matProjection =
 		XMMatrixPerspectiveFovLH(
 			XMConvertToRadians(45.0f),				// 上下画角45度
 			(float)window_width / window_height,	// アスペクト比 （ 画面横幅/画面縦幅 ）
 			0.1f, 1000.0f							// 前端、奥端
 		);
 		
+
 		// ビュー変換行列
-		XMMATRIX matView;
-		XMFLOAT3 eye(0, 0, -100);	// 視点座標
-		XMFLOAT3 target(0, 0, 0);	// 注視点座標
-		XMFLOAT3 up(0, 1, 0);		// 上方向ベクトル
-		matView = XMMatrixLookAtLH(XMLoadFloat3(&eye), XMLoadFloat3(&target), XMLoadFloat3(&up));
+		
+		eye={ 0, 0, -100 };	// 視点座標
+		target={ 0, 0, 0 };	// 注視点座標
+		up={ 0, 1, 0 };		// 上方向ベクトル
+		
 
-
-	// 定数バッファに転送
-		constMapTransform->mat = matView*matProjection;
+	//// 定数バッファに転送
+	//	constMapTransform->mat = matView * matProjection;
 
 	}
 
@@ -509,31 +509,30 @@ void Triangle::Init(ID3D12Device* device) {
 	device->CreateShaderResourceView(texBuff, &srvDesc, srvHandle);
 }
 
-void Triangle::Update(ID3D12Device* device) {
+void Triangle::Update(ID3D12Device* device,BYTE* keys) {
+	// NULLポインタチェック
+	assert(keys);
 
-	/*
-	transformX = 0.0f;
-		transformY = 0.0f;
-		rotation = 0.0f;
-		scale = 1.0f;
+	if (keys[DIK_D]||keys[DIK_A]) {
+		if (keys[DIK_D]) {
+			angle += Affin::radConvert(1.0f);
+		}
+		else if (keys[DIK_A]) {
+			angle -= Affin::radConvert(1.0f);
+		}
 
+		// angleラジアンだけy軸周りに回転。半径は-100
+		eye.x = -100 * sinf(angle);
+		eye.z = -100 * cosf(angle);
+		matView = XMMatrixLookAtLH(XMLoadFloat3(&eye), XMLoadFloat3(&target), XMLoadFloat3(&up));
 
 		
+	}
 
-		//アフィン行列の生成
-		affin[0][0] = scale * cos(rotation);
-		affin[0][1] = scale * (-sin(rotation));
-		affin[0][2] = transformX;
+	// 定数バッファに転送
+	constMapTransform->mat = matView * matProjection;
 
-		affin[1][0] = scale * sin(rotation);
-		affin[1][1] = scale * cos(rotation);
-		affin[1][2] = transformY;
-
-		affin[2][0] = 0.0f;
-		affin[2][1] = 0.0f;
-		affin[2][2] = 1.0f;
-
-
+	/*
 		// アフィン変換
 		for (int i = 0; i < _countof(vertices); i++) {
 			vertices[i].x = vertices[i].x * affin[0][0] +
