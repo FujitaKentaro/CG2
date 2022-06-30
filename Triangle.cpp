@@ -7,7 +7,7 @@ Triangle::Triangle() {
 Triangle::~Triangle() {
 
 }
-Triangle::Triangle (Vertex vertices[]) {
+Triangle::Triangle(Vertex vertices[]) {
 
 	for (int i = 0; i < _countof(this->vertices); i++) {
 		this->vertices[i] = vertices[i];	//座標をコピー
@@ -46,7 +46,7 @@ void Triangle::Init(ID3D12Device* device) {
 	assert(SUCCEEDED(result));
 
 	//GPU上のバッファに対応した仮想メモリ（メインメモリ上）を取得
-	
+
 	result = vertBuff->Map(0, nullptr, (void**)&vertMap);
 	assert(SUCCEEDED(result));
 
@@ -56,7 +56,7 @@ void Triangle::Init(ID3D12Device* device) {
 	}
 	//繋がりを解除
 	vertBuff->Unmap(0, nullptr);
-	
+
 	//GPU仮想アドレス
 	vbView.BufferLocation = vertBuff->GetGPUVirtualAddress();
 	//頂点バッファのサイズ
@@ -279,7 +279,7 @@ void Triangle::Init(ID3D12Device* device) {
 	samplerDesc.ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;           //ピクセルシェーダからのみ使用可能
 
 
-	
+
 	// ルートシグネチャの設定
 	D3D12_ROOT_SIGNATURE_DESC rootSignatureDesc{};
 	rootSignatureDesc.Flags = D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT;
@@ -301,7 +301,7 @@ void Triangle::Init(ID3D12Device* device) {
 	pipelineDesc.pRootSignature = rootSignature;
 
 	// パイプランステートの生成
-	
+
 	result = device->CreateGraphicsPipelineState(&pipelineDesc, IID_PPV_ARGS(&pipelineState));
 	assert(SUCCEEDED(result));
 
@@ -318,7 +318,7 @@ void Triangle::Init(ID3D12Device* device) {
 	cbResourceDesc.SampleDesc.Count = 1;
 	cbResourceDesc.Layout = D3D12_TEXTURE_LAYOUT_ROW_MAJOR;
 
-	
+
 	// 定数バッファの生成
 	result = device->CreateCommittedResource(
 		&cbHeapProp, // ヒープ設定
@@ -367,39 +367,66 @@ void Triangle::Init(ID3D12Device* device) {
 		assert(SUCCEEDED(result));
 
 
-	//平行投影変換
-		// 単位行列を代入
+		//平行投影変換
+			// 単位行列を代入
 		constMapTransform->mat = XMMatrixIdentity();
 
 		constMapTransform->mat = XMMatrixOrthographicOffCenterLH(
 			2.0f / window_width, window_width,
 			window_height, -2.0f / window_height,
-			0.0f,1.0f
+			0.0f, 1.0f
 		);
 		/*constMapTransform->mat.r[0].m128_f32[0] = 2.0f/window_width;
 		constMapTransform->mat.r[1].m128_f32[1] = -2.0f / window_height;
 		constMapTransform->mat.r[3].m128_f32[0] = -1.0f;
 		constMapTransform->mat.r[3].m128_f32[1] = 1.0f;*/
 
-	//透視投影変換
-		// 射影変換行列の計算
+		//透視投影変換
+			// 射影変換行列の計算
 		matProjection =
-		XMMatrixPerspectiveFovLH(
-			XMConvertToRadians(45.0f),				// 上下画角45度
-			(float)window_width / window_height,	// アスペクト比 （ 画面横幅/画面縦幅 ）
-			0.1f, 1000.0f							// 前端、奥端
-		);
-		
+			XMMatrixPerspectiveFovLH(
+				XMConvertToRadians(45.0f),				// 上下画角45度
+				(float)window_width / window_height,	// アスペクト比 （ 画面横幅/画面縦幅 ）
+				0.1f, 1000.0f							// 前端、奥端
+			);
+
 
 		// ビュー変換行列
-		
-		eye={ 0, 0, -100 };	// 視点座標
-		target={ 0, 0, 0 };	// 注視点座標
-		up={ 0, 1, 0 };		// 上方向ベクトル
-		
 
-	//// 定数バッファに転送
-	//	constMapTransform->mat = matView * matProjection;
+		eye = { 0, 0, -100 };	// 視点座標
+		target = { 0, 0, 0 };	// 注視点座標
+		up = { 0, 1, 0 };		// 上方向ベクトル
+		matView = XMMatrixLookAtLH(XMLoadFloat3(&eye), XMLoadFloat3(&target), XMLoadFloat3(&up));
+
+
+		////ワールド変換行列
+		//matWorld = XMMatrixIdentity();
+
+		//座標
+		 scale = { 1.0f,0.5f,1.0f };
+		 position = { 0.0f,0.0f,0.0f };
+		 rotation = { 0.0f,0.0f,0.0f };
+
+		//// スケーリング行列
+		//XMMATRIX matScale; 
+		//matScale = XMMatrixScaling(1.0f, 0.5f, 1.0f);
+		//matWorld *= matScale;
+
+		//// 回転行列
+		//XMMATRIX matRot = XMMatrixIdentity();
+		//matRot *= XMMatrixRotationZ(XMConvertToRadians(0.0f));	//Z軸に0度回転
+		//matRot *= XMMatrixRotationX(XMConvertToRadians(15.0f));	//X軸に15度回転
+		//matRot *= XMMatrixRotationY(XMConvertToRadians(30.0f));	//Y軸に30度回転
+		//matWorld *= matRot;
+
+		//// 移動行列
+		//XMMATRIX matTrans;
+		//matTrans = XMMatrixTranslation(-50.0f, 0, 0);
+		//matWorld *= matTrans;
+
+
+		//// 定数バッファに転送
+		//constMapTransform->mat = matWorld * matView * matProjection;
 
 	}
 
@@ -486,7 +513,7 @@ void Triangle::Init(ID3D12Device* device) {
 	srvHeapDesc.NumDescriptors = kMaxSRVCount;
 
 	// 設定を元にSRV用デスクリプタヒープを生成
-	
+
 	result = device->CreateDescriptorHeap(&srvHeapDesc, IID_PPV_ARGS(&srvHeap));
 	assert(SUCCEEDED(result));
 
@@ -509,10 +536,53 @@ void Triangle::Init(ID3D12Device* device) {
 	device->CreateShaderResourceView(texBuff, &srvDesc, srvHandle);
 }
 
-void Triangle::Update(ID3D12Device* device,BYTE* keys) {
+void Triangle::Update(ID3D12Device* device, BYTE* keys) {
 	// NULLポインタチェック
 	assert(keys);
 
+	if (keys[DIK_UP] || keys[DIK_DOWN] || keys[DIK_RIGHT] || keys[DIK_LEFT]) {
+		if (keys[DIK_UP]) {
+			position.z += 1.0f;
+		}
+		else if (keys[DIK_DOWN]) {
+			position.z -= 1.0f;
+		}
+		if (keys[DIK_RIGHT]) {
+			position.x += 1.0f;
+		}
+		else if (keys[DIK_LEFT]) {
+			position.x -= 1.0f;
+		}
+	}
+
+	
+
+	// スケーリング行列
+	XMMATRIX matScale;
+	matScale = XMMatrixScaling(scale.x,scale.y,scale.z);	
+
+	// 回転行列
+	XMMATRIX matRot = XMMatrixIdentity();
+	matRot *= XMMatrixRotationZ(XMConvertToRadians(rotation.z));	//Z軸に0度回転
+	matRot *= XMMatrixRotationX(XMConvertToRadians(rotation.x));	//X軸に15度回転
+	matRot *= XMMatrixRotationY(XMConvertToRadians(rotation.y));	//Y軸に30度回転
+	
+	// スケーリング行列
+	XMMATRIX matTrans;
+	matTrans = XMMatrixTranslation(position.x, position.y, position.z);
+	
+	//ワールド変換行列
+	matWorld = XMMatrixIdentity();
+	matWorld *= matScale;
+	matWorld *= matRot;
+	matWorld *= matTrans;
+
+	// 定数バッファに転送
+	constMapTransform->mat = matWorld * matView * matProjection;
+
+
+
+	/*
 	if (keys[DIK_D]||keys[DIK_A]) {
 		if (keys[DIK_D]) {
 			angle += Affin::radConvert(1.0f);
@@ -526,36 +596,17 @@ void Triangle::Update(ID3D12Device* device,BYTE* keys) {
 		eye.z = -100 * cosf(angle);
 		matView = XMMatrixLookAtLH(XMLoadFloat3(&eye), XMLoadFloat3(&target), XMLoadFloat3(&up));
 
-		
 	}
 
 	// 定数バッファに転送
-	constMapTransform->mat = matView * matProjection;
+	constMapTransform->mat = matView * matProjection; */
 
-	/*
-		// アフィン変換
-		for (int i = 0; i < _countof(vertices); i++) {
-			vertices[i].x = vertices[i].x * affin[0][0] +
-				vertices[i].y * affin[0][1] + 1.0f * affin[0][2];
-			vertices[i].y = vertices[i].x * affin[1][0] +
-				vertices[i].y * affin[1][1] + 1.0f * affin[1][2];
-			vertices[i].z = vertices[i].x * affin[2][0] +
-				vertices[i].y * affin[2][1] + 1.0f * affin[2][2];
-		}
-
-
-
-		//全頂点に対して
-		for (int i = 0; i < _countof(vertices); i++) {
-			vertMap[i] = vertices[i];	//座標をコピー
-		}
-	*/
 
 }
 
-void Triangle::Draw(ID3D12GraphicsCommandList* commandList) {	
+void Triangle::Draw(ID3D12GraphicsCommandList* commandList) {
 
-	
+
 	// パイプラインステートとルートシグネチャの設定コマンド
 	commandList->SetPipelineState(pipelineState);
 	commandList->SetGraphicsRootSignature(rootSignature);
