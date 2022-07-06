@@ -195,6 +195,64 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		// レンダーターゲットビューの生成
 		device->CreateRenderTargetView(backBuffers[i], &rtvDesc, rtvHandle);
 	}
+#pragma region 深度バッファ
+
+
+
+	//深度バッファ
+	//リソース設定
+	D3D12_RESOURCE_DESC depthResouceDesc{};
+	depthResouceDesc.Dimension = D3D12_RESOURCE_DIMENSION_TEXTURE2D;
+	depthResouceDesc.Width = window_width;								// レンダーターゲットに合わせる
+	depthResouceDesc.Height = window_height;							//			”
+	depthResouceDesc.DepthOrArraySize = 1;
+	depthResouceDesc.Format = DXGI_FORMAT_D32_FLOAT;					// 深度値フォーマット
+	depthResouceDesc.SampleDesc.Count = 1;
+	depthResouceDesc.Flags = D3D12_RESOURCE_FLAG_ALLOW_DEPTH_STENCIL;	// デプスステンシル
+
+	// 深度値用ヒーププロパティ
+	D3D12_HEAP_PROPERTIES depthHeapProp{};
+	depthHeapProp.Type = D3D12_HEAP_TYPE_DEFAULT;
+
+	// 深度値のクリア設定
+	D3D12_CLEAR_VALUE depthClearValue{};
+	depthClearValue.DepthStencil.Depth = 1.0f;		// 深度値1.0ｆ（ 最大値 ）でクリア
+	depthClearValue.Format = DXGI_FORMAT_D32_FLOAT;	// 深度値フォーマット
+
+	// リソース生成
+	ID3D12Resource* depthBuff = nullptr;
+	result = device->CreateCommittedResource(
+		&depthHeapProp,
+		D3D12_HEAP_FLAG_NONE,
+		&depthResouceDesc,
+		D3D12_RESOURCE_STATE_DEPTH_WRITE,	// 深度書き込みに使用
+		&depthClearValue,
+		IID_PPV_ARGS(&depthBuff)
+	);
+
+	// 深度ビュー用デスクリプタヒープ作成
+	D3D12_DESCRIPTOR_HEAP_DESC dsvHeapDesc{};
+	dsvHeapDesc.NumDescriptors = 1;						// 深度ビューは１つ
+	dsvHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_DSV;	// デプスステンシルビュー
+	ID3D12DescriptorHeap* dsvHeap = nullptr;
+	result = device->CreateDescriptorHeap(&dsvHeapDesc, IID_PPV_ARGS(&dsvHeap));
+
+	// 深度ビュー作成
+	D3D12_DEPTH_STENCIL_VIEW_DESC dsvDesc = {};
+	dsvDesc.Format = DXGI_FORMAT_D32_FLOAT;		// 深度値フォーマット
+	dsvDesc.ViewDimension = D3D12_DSV_DIMENSION_TEXTURE2D;
+	device->CreateDepthStencilView(
+		depthBuff,
+		&dsvDesc,
+		dsvHeap->GetCPUDescriptorHandleForHeapStart()
+	);
+
+	
+
+
+#pragma endregion
+
+
 
 	// フェンスの生成
 	ID3D12Fence* fence = nullptr;
@@ -227,28 +285,48 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 #pragma region 描画初期化処理
 
 	//頂点
-	Vertex vertex[4];	
-		
-			vertex[0] = {
-				{-50.0f ,-50.0f, 0.0f}, {0.0f, 1.0f}, // 左下				
-			};
-			vertex[1] = {
-				{-50.0f,50.0f, 0.0f}, { 0.0f, 0.0f }, // 左上		
-			};
-			vertex[2] = {
-				{50.0f,-50.0f, 0.0f }, { 1.0f, 1.0f } // 右下
-			};
-			vertex[3] = {
-				{50.0f, 50.0f, 0.0f }, { 1.0f, 0.0f } // 右上
-			};
-	
-	//三角形生成
-	Triangle* triangle;	
-	
-		triangle = new Triangle(vertex);
+	Vertex vertex[] = {
+		// 前
+		{{-5.0f,-5.0f, -5.0f}, { 0.0f, 1.0f }/* 左下*/},
+		{{-5.0f, 5.0f, -5.0f}, { 0.0f, 0.0f }/* 左上*/},
+		{{ 5.0f,-5.0f, -5.0f}, { 1.0f, 1.0f }/* 右下*/},
+		{{ 5.0f, 5.0f, -5.0f}, { 1.0f, 0.0f }/* 右上*/},
+		// 後ろ
+		{{-5.0f,-5.0f,  5.0f}, { 0.0f, 1.0f }/* 左下*/},
+		{{-5.0f, 5.0f,  5.0f}, { 0.0f, 0.0f }/* 左上*/},
+		{{ 5.0f,-5.0f,  5.0f}, { 1.0f, 1.0f }/* 右下*/},
+		{{ 5.0f, 5.0f,  5.0f}, { 1.0f, 0.0f }/* 右上*/},
+		// 左
+		{{-5.0f,-5.0f, -5.0f}, { 0.0f, 1.0f }/* 左下*/},
+		{{-5.0f,-5.0f,  5.0f}, { 0.0f, 0.0f }/* 左上*/},
+		{{-5.0f, 5.0f, -5.0f}, { 1.0f, 1.0f }/* 右下*/},
+		{{-5.0f, 5.0f,  5.0f}, { 1.0f, 0.0f }/* 右上*/},
+		// 右
+		{{ 5.0f,-5.0f, -5.0f}, { 0.0f, 1.0f }/* 左下*/},
+		{{ 5.0f,-5.0f,  5.0f}, { 0.0f, 0.0f }/* 左上*/},
+		{{ 5.0f, 5.0f, -5.0f}, { 1.0f, 1.0f }/* 右下*/},
+		{{ 5.0f, 5.0f,  5.0f}, { 1.0f, 0.0f }/* 右上*/},
+		// 上
+		{{-5.0f,-5.0f, -5.0f}, { 0.0f, 1.0f }/* 左下*/},
+		{{-5.0f,-5.0f,  5.0f}, { 0.0f, 0.0f }/* 左上*/},
+		{{ 5.0f,-5.0f, -5.0f}, { 1.0f, 1.0f }/* 右下*/},
+		{{ 5.0f,-5.0f,  5.0f}, { 1.0f, 0.0f }/* 右上*/},
+		// 下
+		{{-5.0f, 5.0f, -5.0f}, { 0.0f, 1.0f }/* 左下*/},
+		{{-5.0f, 5.0f,  5.0f}, { 0.0f, 0.0f }/* 左上*/},
+		{{ 5.0f, 5.0f, -5.0f}, { 1.0f, 1.0f }/* 右下*/},
+		{{ 5.0f, 5.0f,  5.0f}, { 1.0f, 0.0f }/* 右上*/},
+	};
 
-		triangle->Init(device);
 	
+
+	//三角形生成
+	Triangle* triangle;
+
+	triangle = new Triangle(vertex);
+
+	triangle->Init(device);
+
 
 #pragma endregion シェーダリソースビュー
 
@@ -257,10 +335,10 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 
 
-//描画初期化処理　ここまで
+	//描画初期化処理　ここまで
 
 
-//ゲームループ
+	//ゲームループ
 	while (true) {
 
 #pragma region ウィンドウメッセージ処理
@@ -310,17 +388,17 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		// 更新処理
 #pragma region キーボード情報の取得
 
-		
+
 
 #pragma endregion 更新処理
 
 
-		
-			triangle->Update(device,keys);
-		
+
+		triangle->Update(device, keys);
 
 
-		
+
+
 
 
 #pragma endregion DirectX毎フレーム処理
@@ -354,9 +432,9 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 
 
-			triangle->Draw(commandList);
+		triangle->Draw(commandList);
 
-		
+
 
 		// 5.リソースバリアを戻す
 		barrierDesc.Transition.StateBefore = D3D12_RESOURCE_STATE_RENDER_TARGET;		// 描画状態から
@@ -394,8 +472,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	UnregisterClass(w.lpszClassName, w.hInstance);
 
 
-		delete triangle;
-	
+	delete triangle;
+
 
 	return 0;
 }

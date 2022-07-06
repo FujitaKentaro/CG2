@@ -300,8 +300,13 @@ void Triangle::Init(ID3D12Device* device) {
 	// パイプラインにルートシグネチャをセット
 	pipelineDesc.pRootSignature = rootSignature;
 
-	// パイプランステートの生成
+	// デプスステンシルステートの設定
+	pipelineDesc.DepthStencilState.DepthEnable = true;							// 深度テストを行う
+	pipelineDesc.DepthStencilState.DepthWriteMask = D3D12_DEPTH_WRITE_MASK_ALL;	// 書き込み許可
+	pipelineDesc.DepthStencilState.DepthFunc = D3D12_COMPARISON_FUNC_LESS;
+	pipelineDesc.DSVFormat = DXGI_FORMAT_D32_FLOAT;								// 深度値フォーマット
 
+	// パイプランステートの生成
 	result = device->CreateGraphicsPipelineState(&pipelineDesc, IID_PPV_ARGS(&pipelineState));
 	assert(SUCCEEDED(result));
 
@@ -400,33 +405,13 @@ void Triangle::Init(ID3D12Device* device) {
 
 
 		////ワールド変換行列
-		//matWorld = XMMatrixIdentity();
-
 		//座標
-		 scale = { 1.0f,0.5f,1.0f };
+		 scale = { 1.0f,1.0f,1.0f };
 		 position = { 0.0f,0.0f,0.0f };
 		 rotation = { 0.0f,0.0f,0.0f };
 
-		//// スケーリング行列
-		//XMMATRIX matScale; 
-		//matScale = XMMatrixScaling(1.0f, 0.5f, 1.0f);
-		//matWorld *= matScale;
+		
 
-		//// 回転行列
-		//XMMATRIX matRot = XMMatrixIdentity();
-		//matRot *= XMMatrixRotationZ(XMConvertToRadians(0.0f));	//Z軸に0度回転
-		//matRot *= XMMatrixRotationX(XMConvertToRadians(15.0f));	//X軸に15度回転
-		//matRot *= XMMatrixRotationY(XMConvertToRadians(30.0f));	//Y軸に30度回転
-		//matWorld *= matRot;
-
-		//// 移動行列
-		//XMMATRIX matTrans;
-		//matTrans = XMMatrixTranslation(-50.0f, 0, 0);
-		//matWorld *= matTrans;
-
-
-		//// 定数バッファに転送
-		//constMapTransform->mat = matWorld * matView * matProjection;
 
 	}
 
@@ -554,6 +539,26 @@ void Triangle::Update(ID3D12Device* device, BYTE* keys) {
 			position.x -= 1.0f;
 		}
 	}
+	if (keys[DIK_Q] || keys[DIK_E] || keys[DIK_A] || keys[DIK_D] || keys[DIK_Z] || keys[DIK_C]) {
+		if (keys[DIK_Q]) {
+			rotation.x += 1.0f;
+		}
+		else if (keys[DIK_E]) {
+			rotation.x -= 1.0f;
+		}
+		if (keys[DIK_A]) {
+			rotation.y += 1.0f;
+		}
+		else if (keys[DIK_D]) {
+			rotation.y -= 1.0f;
+		}
+		if (keys[DIK_Z]) {
+			rotation.z += 1.0f;
+		}
+		else if (keys[DIK_C]) {
+			rotation.z -= 1.0f;
+		}
+	}
 
 	
 
@@ -601,7 +606,7 @@ void Triangle::Update(ID3D12Device* device, BYTE* keys) {
 	// 定数バッファに転送
 	constMapTransform->mat = matView * matProjection; */
 
-
+	
 }
 
 void Triangle::Draw(ID3D12GraphicsCommandList* commandList) {
