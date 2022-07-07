@@ -45,8 +45,33 @@ void Triangle::Init(ID3D12Device* device) {
 		IID_PPV_ARGS(&vertBuff));
 	assert(SUCCEEDED(result));
 
-	//GPU上のバッファに対応した仮想メモリ（メインメモリ上）を取得
+	for (int i = 0; i < _countof(indices) / 3; i++) {
+	// 三角形一つ毎に計算していく
+		// 三角形のインデックスを取り出して、一時的な変数にいれる
+		unsigned short index0 = indices[i * 3 + 0];
+		unsigned short index1 = indices[i * 3 + 1];
+		unsigned short index2 = indices[i * 3 + 2];
+		// 三角形を構成する頂点座標をベクトルに代入
+		XMVECTOR p0 = XMLoadFloat3(&vertices[index0].pos);
+		XMVECTOR p1 = XMLoadFloat3(&vertices[index1].pos);
+		XMVECTOR p2 = XMLoadFloat3(&vertices[index2].pos);
+		// p0->p1ベクトル、p0->p2ベクトルを計算 （ ベクトルの減算 ）
+		XMVECTOR v1 = XMVectorSubtract(p1, p0);
+		XMVECTOR v2 = XMVectorSubtract(p2, p0);
+		// 外積は両方から垂直なベクトル
+		XMVECTOR nomal = XMVector3Cross(v1, v2);
+		// 正規化 （長さを一にする）
+		nomal = XMVector3Normalize(nomal);
+		// 求めた法線を頂点データに代入
+		XMStoreFloat3(&vertices[index0].normal, nomal);
+		XMStoreFloat3(&vertices[index1].normal, nomal);
+		XMStoreFloat3(&vertices[index2].normal, nomal);
 
+	}
+	
+
+
+	//GPU上のバッファに対応した仮想メモリ（メインメモリ上）を取得
 	result = vertBuff->Map(0, nullptr, (void**)&vertMap);
 	assert(SUCCEEDED(result));
 
