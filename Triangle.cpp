@@ -46,8 +46,8 @@ void Triangle::Init(ID3D12Device* device) {
 	assert(SUCCEEDED(result));
 
 	for (int i = 0; i < _countof(indices) / 3; i++) {
-	// 三角形一つ毎に計算していく
-		// 三角形のインデックスを取り出して、一時的な変数にいれる
+		// 三角形一つ毎に計算していく
+			// 三角形のインデックスを取り出して、一時的な変数にいれる
 		unsigned short index0 = indices[i * 3 + 0];
 		unsigned short index1 = indices[i * 3 + 1];
 		unsigned short index2 = indices[i * 3 + 2];
@@ -68,7 +68,7 @@ void Triangle::Init(ID3D12Device* device) {
 		XMStoreFloat3(&vertices[index2].normal, nomal);
 
 	}
-	
+
 
 
 	//GPU上のバッファに対応した仮想メモリ（メインメモリ上）を取得
@@ -372,6 +372,7 @@ void Triangle::Init(ID3D12Device* device) {
 	// 値を書き込むと自動的に転送される
 	constMapMaterial->color = XMFLOAT4(0, 0, 0, 1.0f);	// RGBAで半透明の赤
 
+
 	{
 
 		// ヒープ設定
@@ -388,26 +389,39 @@ void Triangle::Init(ID3D12Device* device) {
 		cbResourceDesc.Layout = D3D12_TEXTURE_LAYOUT_ROW_MAJOR;
 
 
-		// 定数バッファの生成
+		// 定数バッファの生成0
 		result = device->CreateCommittedResource(
 			&cbHeapProp, // ヒープ設定
 			D3D12_HEAP_FLAG_NONE,
 			&cbResourceDesc, // リソース設定
 			D3D12_RESOURCE_STATE_GENERIC_READ,
 			nullptr,
-			IID_PPV_ARGS(&constBuffTransform));
+			IID_PPV_ARGS(&constBuffTransform0));
 		assert(SUCCEEDED(result));
 
-		// 定数バッファのマッピング
-		result = constBuffTransform->Map(0, nullptr, (void**)&constMapTransform); // マッピング
+		// 定数バッファのマッピング0
+		result = constBuffTransform0->Map(0, nullptr, (void**)&constMapTransform0); // マッピング
 		assert(SUCCEEDED(result));
 
+		// 定数バッファの生成1
+		result = device->CreateCommittedResource(
+			&cbHeapProp, // ヒープ設定
+			D3D12_HEAP_FLAG_NONE,
+			&cbResourceDesc, // リソース設定
+			D3D12_RESOURCE_STATE_GENERIC_READ,
+			nullptr,
+			IID_PPV_ARGS(&constBuffTransform1));
+		assert(SUCCEEDED(result));
+
+		// 定数バッファのマッピング1
+		result = constBuffTransform1->Map(0, nullptr, (void**)&constMapTransform1); // マッピング
+		assert(SUCCEEDED(result));
 
 		//平行投影変換
 			// 単位行列を代入
-		constMapTransform->mat = XMMatrixIdentity();
+		constMapTransform0->mat = XMMatrixIdentity();
 
-		constMapTransform->mat = XMMatrixOrthographicOffCenterLH(
+		constMapTransform0->mat = XMMatrixOrthographicOffCenterLH(
 			2.0f / window_width, window_width,
 			window_height, -2.0f / window_height,
 			0.0f, 1.0f
@@ -433,17 +447,6 @@ void Triangle::Init(ID3D12Device* device) {
 		target = { 0, 0, 0 };	// 注視点座標
 		up = { 0, 1, 0 };		// 上方向ベクトル
 		matView = XMMatrixLookAtLH(XMLoadFloat3(&eye), XMLoadFloat3(&target), XMLoadFloat3(&up));
-
-
-		////ワールド変換行列
-		//座標
-		 scale = { 1.0f,1.0f,1.0f };
-		 position = { 0.0f,0.0f,0.0f };
-		 rotation = { 0.0f,0.0f,0.0f };
-
-		
-
-
 	}
 
 #pragma region 画像イメージデータの作成
@@ -591,31 +594,52 @@ void Triangle::Update(ID3D12Device* device, BYTE* keys) {
 		}
 	}
 
-	
+
 
 	// スケーリング行列
 	XMMATRIX matScale;
-	matScale = XMMatrixScaling(scale.x,scale.y,scale.z);	
+	matScale = XMMatrixScaling(scale.x, scale.y, scale.z);
 
 	// 回転行列
 	XMMATRIX matRot = XMMatrixIdentity();
 	matRot *= XMMatrixRotationZ(XMConvertToRadians(rotation.z));	//Z軸に0度回転
 	matRot *= XMMatrixRotationX(XMConvertToRadians(rotation.x));	//X軸に15度回転
 	matRot *= XMMatrixRotationY(XMConvertToRadians(rotation.y));	//Y軸に30度回転
-	
+
 	// スケーリング行列
 	XMMATRIX matTrans;
 	matTrans = XMMatrixTranslation(position.x, position.y, position.z);
-	
+
 	//ワールド変換行列
 	matWorld = XMMatrixIdentity();
 	matWorld *= matScale;
 	matWorld *= matRot;
 	matWorld *= matTrans;
 
-	// 定数バッファに転送
-	constMapTransform->mat = matWorld * matView * matProjection;
+	// スケーリング行列
+	XMMATRIX matScale1;
+	matScale1 = XMMatrixScaling(scale1.x, scale1.y, scale1.z);
 
+	// 回転行列
+	XMMATRIX matRot1 = XMMatrixIdentity();
+	matRot1 *= XMMatrixRotationZ(XMConvertToRadians(rotation1.z));	//Z軸に0度回転
+	matRot1 *= XMMatrixRotationX(XMConvertToRadians(rotation1.x));	//X軸に15度回転
+	matRot1 *= XMMatrixRotationY(XMConvertToRadians(rotation1.y));	//Y軸に30度回転
+
+	// スケーリング行列
+	XMMATRIX matTrans1;
+	matTrans1 = XMMatrixTranslation(position1.x, position1.y, position1.z);
+
+	//ワールド変換行列
+	matWorld1 = XMMatrixIdentity();
+	matWorld1 *= matScale1;
+	matWorld1 *= matRot1;
+	matWorld1 *= matTrans1;
+
+	// 定数バッファに転送
+	constMapTransform0->mat = matWorld * matView * matProjection;
+	// 定数バッファに転送
+	constMapTransform1->mat = matWorld1 * matView * matProjection;
 
 
 	/*
@@ -637,7 +661,7 @@ void Triangle::Update(ID3D12Device* device, BYTE* keys) {
 	// 定数バッファに転送
 	constMapTransform->mat = matView * matProjection; */
 
-	
+
 }
 
 void Triangle::Draw(ID3D12GraphicsCommandList* commandList) {
@@ -664,15 +688,22 @@ void Triangle::Draw(ID3D12GraphicsCommandList* commandList) {
 	// SRVヒープの先頭にあるSRVをルートパラメータ1番に設定
 	commandList->SetGraphicsRootDescriptorTable(1, srvGpuHandle);
 
-	// 定数バッファビュー（CBV）の設定コマンド
-	commandList->SetGraphicsRootConstantBufferView(2, constBuffTransform->GetGPUVirtualAddress());
+
 
 	// インデックスバッファビューの設定コマンド
 	commandList->IASetIndexBuffer(&ibView);
 
 	//// 描画コマンド (頂点バッファのみ)
+	
 	//commandList->DrawInstanced(_countof(vertices), 1, 0, 0); // 全ての頂点を使って描画
+	// 定数バッファビュー（CBV）の設定コマンド
+	commandList->SetGraphicsRootConstantBufferView(2, constBuffTransform0->GetGPUVirtualAddress());
 
+	// 描画コマンド （インデックスバッファ＆頂点バッファ）
+	commandList->DrawIndexedInstanced(_countof(indices), 1, 0, 0, 0);
+
+	// 定数バッファビュー（CBV）の設定コマンド
+	commandList->SetGraphicsRootConstantBufferView(2, constBuffTransform1->GetGPUVirtualAddress());
 	// 描画コマンド （インデックスバッファ＆頂点バッファ）
 	commandList->DrawIndexedInstanced(_countof(indices), 1, 0, 0, 0);
 
