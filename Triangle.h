@@ -21,6 +21,7 @@ public:
 	ID3D12PipelineState* pipelineState = nullptr;
 	// 定数バッファ
 	ID3D12Resource* constBuffMaterial = nullptr;
+	
 
 	//3Dオブジェクトの数
 	static const size_t kObjectCount = 50;
@@ -39,6 +40,8 @@ public:
 	Vertex* vertMap = nullptr;
 	// 設定を元にSRV用デスクリプタヒープを生成
 	ID3D12DescriptorHeap* srvHeap = nullptr;
+	// 
+	UINT incrementSize;
 
 	// ワールド変換行列
 	XMMATRIX matWorld;
