@@ -22,11 +22,17 @@ public:
 	// 定数バッファ
 	ID3D12Resource* constBuffMaterial = nullptr;
 
-	ID3D12Resource* constBuffTransform0 = nullptr;
-	ConstBufferDataTransform* constMapTransform0 = nullptr;
+	//3Dオブジェクトの数
+	static const size_t kObjectCount = 50;
+	// 3Dオブジェクトの配列
+	Object3d object3ds[kObjectCount];
 
+	// 定数バッファの生成0
+	/*ID3D12Resource* constBuffTransform0 = nullptr;
+	ConstBufferDataTransform* constMapTransform0 = nullptr;
+	// 定数バッファの生成1
 	ID3D12Resource* constBuffTransform1 = nullptr;
-	ConstBufferDataTransform* constMapTransform1 = nullptr;
+	ConstBufferDataTransform* constMapTransform1 = nullptr;*/
 
 
 	//GPU上のバッファに対応した仮想メモリ
