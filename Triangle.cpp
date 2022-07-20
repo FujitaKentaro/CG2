@@ -337,7 +337,7 @@ void Triangle::Init(ID3D12Device* device) {
 
 
 	// パイプラインにルートシグネチャをセット
-	pipelineDesc.pRootSignature = rootSignature;
+	pipelineDesc.pRootSignature = rootSignature.Get();
 
 	// デプスステンシルステートの設定
 	pipelineDesc.DepthStencilState.DepthEnable = true;							// 深度テストを行う
@@ -786,8 +786,8 @@ void Triangle::Draw(ID3D12GraphicsCommandList* commandList) {
 
 
 	// パイプラインステートとルートシグネチャの設定コマンド
-	commandList->SetPipelineState(pipelineState);
-	commandList->SetGraphicsRootSignature(rootSignature);
+	commandList->SetPipelineState(pipelineState.Get());
+	commandList->SetGraphicsRootSignature(rootSignature.Get());
 
 	// プリミティブ形状の設定コマンド
 	commandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST); // 三角形リスト

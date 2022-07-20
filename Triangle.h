@@ -16,11 +16,11 @@ public:
 
 
 	// ルートシグネチャ
-	ID3D12RootSignature* rootSignature;
+	ComPtr<ID3D12RootSignature> rootSignature;
 	// パイプランステートの生成
-	ID3D12PipelineState* pipelineState;
+	ComPtr<ID3D12PipelineState> pipelineState;
 	// 定数バッファ
-	ID3D12Resource* constBuffMaterial;
+	ComPtr <ID3D12Resource> constBuffMaterial;
 	
 
 	//3Dオブジェクトの数

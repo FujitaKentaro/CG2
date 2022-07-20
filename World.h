@@ -10,7 +10,7 @@
 #include <d3dcompiler.h>
 #include <dinput.h>
 #include <DirectXTex.h>
-#include "math/Affin.h"
+//#include "math/Affin.h"
 #include <wrl.h>
 
 #define DIRECTINPUT_VERSION		0x0800		//DirectInputのバージョン指定
