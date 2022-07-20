@@ -50,10 +50,9 @@ struct  Vertex
 };
 
 // 3Dオブジェクト型
-
 struct Object3d {
 	// 定数バッファ （行列用）
-	ID3D12Resource* constBuffTrnceform;
+	ComPtr <ID3D12Resource> constBuffTrnceform;
 	// 定数バッファマップ （行列用）
 	ConstBufferDataTransform* constMapTransform = nullptr;
 
