@@ -327,14 +327,15 @@ void Triangle::Init(ID3D12Device* device) {
 	rootSignatureDesc.NumStaticSamplers = 1;
 
 	// ルートシグネチャのシリアライズ
-	ID3DBlob* rootSigBlob = nullptr;
+	ComPtr <ID3DBlob> rootSigBlob;
 	result = D3D12SerializeRootSignature(&rootSignatureDesc, D3D_ROOT_SIGNATURE_VERSION_1_0,
 		&rootSigBlob, &errorBlob);
 	assert(SUCCEEDED(result));
 	result = device->CreateRootSignature(0, rootSigBlob->GetBufferPointer(), rootSigBlob->GetBufferSize(),
 		IID_PPV_ARGS(&rootSignature));
 	assert(SUCCEEDED(result));
-	rootSigBlob->Release();
+
+
 	// パイプラインにルートシグネチャをセット
 	pipelineDesc.pRootSignature = rootSignature;
 
@@ -555,7 +556,7 @@ void Triangle::Init(ID3D12Device* device) {
 	textureResourceDesc.SampleDesc.Count = 1;
 
 	// テクスチャバッファの生成
-	ID3D12Resource* texBuff = nullptr;
+	ID3D12Resource* texBuff;
 	result = device->CreateCommittedResource(
 		&textureHeapProp,
 		D3D12_HEAP_FLAG_NONE,
@@ -574,7 +575,7 @@ void Triangle::Init(ID3D12Device* device) {
 	textureResourceDesc2.MipLevels = (UINT)metadata2.mipLevels;
 	textureResourceDesc2.SampleDesc.Count = 1;
 	// テクスチャバッファの生成
-	ID3D12Resource* texBuff2 = nullptr;
+	ID3D12Resource* texBuff2;
 	result = device->CreateCommittedResource(
 		&textureHeapProp,
 		D3D12_HEAP_FLAG_NONE,
@@ -631,7 +632,7 @@ void Triangle::Init(ID3D12Device* device) {
 	result = device->CreateDescriptorHeap(&srvHeapDesc, IID_PPV_ARGS(&srvHeap));
 	assert(SUCCEEDED(result));
 
-	// SRVヒープを戦闘ハンドルを取得
+	// SRVヒープを先頭ハンドルを取得
 	D3D12_CPU_DESCRIPTOR_HANDLE srvHandle = srvHeap->GetCPUDescriptorHandleForHeapStart();
 
 	
@@ -802,6 +803,7 @@ void Triangle::Draw(ID3D12GraphicsCommandList* commandList) {
 	commandList->SetDescriptorHeaps(1, &srvHeap);
 	// SRVヒープの先頭ハンドルを取得（SRVを指しているはず）
 	D3D12_GPU_DESCRIPTOR_HANDLE srvGpuHandle = srvHeap->GetGPUDescriptorHandleForHeapStart();
+	
 	// SRVヒープの先頭にあるSRVをルートパラメータ1番に設定
 	commandList->SetGraphicsRootDescriptorTable(1, srvGpuHandle);
 

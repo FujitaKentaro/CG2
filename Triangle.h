@@ -16,11 +16,11 @@ public:
 
 
 	// ルートシグネチャ
-	ID3D12RootSignature* rootSignature = nullptr;
+	ID3D12RootSignature* rootSignature;
 	// パイプランステートの生成
-	ID3D12PipelineState* pipelineState = nullptr;
+	ID3D12PipelineState* pipelineState;
 	// 定数バッファ
-	ID3D12Resource* constBuffMaterial = nullptr;
+	ID3D12Resource* constBuffMaterial;
 	
 
 	//3Dオブジェクトの数
@@ -39,7 +39,7 @@ public:
 	//GPU上のバッファに対応した仮想メモリ
 	Vertex* vertMap = nullptr;
 	// 設定を元にSRV用デスクリプタヒープを生成
-	ID3D12DescriptorHeap* srvHeap = nullptr;
+	ID3D12DescriptorHeap* srvHeap;
 	// 
 	UINT incrementSize;
 

@@ -11,6 +11,7 @@
 #include <dinput.h>
 #include <DirectXTex.h>
 #include "math/Affin.h"
+#include <wrl.h>
 
 #define DIRECTINPUT_VERSION		0x0800		//DirectInputのバージョン指定
 
@@ -21,6 +22,7 @@
 #pragma comment(lib,"dxgi.lib")
 
 using namespace DirectX;
+using namespace Microsoft::WRL;
 
 // 円周率
 const float PI = 3.141592f;
@@ -51,7 +53,7 @@ struct  Vertex
 
 struct Object3d {
 	// 定数バッファ （行列用）
-	ID3D12Resource* constBuffTrnceform = nullptr;
+	ID3D12Resource* constBuffTrnceform;
 	// 定数バッファマップ （行列用）
 	ConstBufferDataTransform* constMapTransform = nullptr;
 
