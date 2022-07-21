@@ -39,7 +39,7 @@ public:
 	//GPU上のバッファに対応した仮想メモリ
 	Vertex* vertMap = nullptr;
 	// 設定を元にSRV用デスクリプタヒープを生成
-	ID3D12DescriptorHeap* srvHeap;
+	ComPtr<ID3D12DescriptorHeap> srvHeap;
 	// 
 	UINT incrementSize;
 

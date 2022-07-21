@@ -800,7 +800,7 @@ void Triangle::Draw(ID3D12GraphicsCommandList* commandList) {
 	commandList->SetGraphicsRootConstantBufferView(0, constBuffMaterial->GetGPUVirtualAddress());
 
 	// SRVヒープの設定コマンド
-	commandList->SetDescriptorHeaps(1, &srvHeap);
+	commandList->SetDescriptorHeaps(1, srvHeap.GetAddressOf());
 	// SRVヒープの先頭ハンドルを取得（SRVを指しているはず）
 	D3D12_GPU_DESCRIPTOR_HANDLE srvGpuHandle = srvHeap->GetGPUDescriptorHandleForHeapStart();
 	
