@@ -10,5 +10,5 @@ float4 main(VSOutput input) : SV_TARGET{
    float diffuse = saturate(dot(-light, input.normal));  // diffuseを[0、1]の範囲にclampする
    float brightness = diffuse + 0.3f;                   // 光源へのベクトルと法線ベクトルの内積
    float4 texcolor = float4(tex.Sample(smp, input.uv));
-   return float4(texcolor.rgb * brightness,1);// RGBをそれぞれの法線のXYZ、Aを1で出力
+   return float4(texcolor.rgb * brightness+color,1);// RGBをそれぞれの法線のXYZ、Aを1で出力
 }

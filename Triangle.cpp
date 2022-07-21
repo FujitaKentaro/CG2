@@ -373,12 +373,8 @@ void Triangle::Init(ID3D12Device* device) {
 	assert(SUCCEEDED(result));
 
 	// 定数バッファのマッピング
-	ConstBufferDataMaterial* constMapMaterial = nullptr;
 	result = constBuffMaterial->Map(0, nullptr, (void**)&constMapMaterial); // マッピング
 	assert(SUCCEEDED(result));
-	// 値を書き込むと自動的に転送される
-	constMapMaterial->color = XMFLOAT4(0, 0, 0, 1.0f);	// RGBAで半透明の赤
-
 
 	{
 
@@ -394,11 +390,6 @@ void Triangle::Init(ID3D12Device* device) {
 		cbResourceDesc.MipLevels = 1;
 		cbResourceDesc.SampleDesc.Count = 1;
 		cbResourceDesc.Layout = D3D12_TEXTURE_LAYOUT_ROW_MAJOR;
-
-		////3Dオブジェクトの数
-		//const size_t kObjectCount = 50;
-		//// 3Dオブジェクトの配列
-		//Object3d object3ds[kObjectCount];
 
 		// 配列内の全オブジェクトに対して
 		for (int i = 0; i < _countof(object3ds); i++) {
@@ -420,41 +411,8 @@ void Triangle::Init(ID3D12Device* device) {
 				// 親オブジェクトに対してｚ方向-8.0ずらす
 				object3ds[i].position = { 0.0f,0.0f,-8.0f };
 			}
-
-
-
-
 		}
-
-
-
-		//// 定数バッファの生成0
-		//result = device->CreateCommittedResource(
-		//	&cbHeapProp, // ヒープ設定
-		//	D3D12_HEAP_FLAG_NONE,
-		//	&cbResourceDesc, // リソース設定
-		//	D3D12_RESOURCE_STATE_GENERIC_READ,
-		//	nullptr,
-		//	IID_PPV_ARGS(&constBuffTransform0));
-		//assert(SUCCEEDED(result));
-
-		//// 定数バッファのマッピング0
-		//result = constBuffTransform0->Map(0, nullptr, (void**)&constMapTransform0); // マッピング
-		//assert(SUCCEEDED(result));
-
-		//// 定数バッファの生成1
-		//result = device->CreateCommittedResource(
-		//	&cbHeapProp, // ヒープ設定
-		//	D3D12_HEAP_FLAG_NONE,
-		//	&cbResourceDesc, // リソース設定
-		//	D3D12_RESOURCE_STATE_GENERIC_READ,
-		//	nullptr,
-		//	IID_PPV_ARGS(&constBuffTransform1));
-		//assert(SUCCEEDED(result));
-
-		//// 定数バッファのマッピング1
-		//result = constBuffTransform1->Map(0, nullptr, (void**)&constMapTransform1); // マッピング
-		//assert(SUCCEEDED(result));
+		
 
 		//平行投影変換
 			// 単位行列を代入
@@ -464,8 +422,8 @@ void Triangle::Init(ID3D12Device* device) {
 			2.0f / window_width, window_width,
 			window_height, -2.0f / window_height,
 			0.0f, 1.0f
-		);*/
-		/*constMapTransform->mat.r[0].m128_f32[0] = 2.0f/window_width;
+		);
+		constMapTransform->mat.r[0].m128_f32[0] = 2.0f/window_width;
 		constMapTransform->mat.r[1].m128_f32[1] = -2.0f / window_height;
 		constMapTransform->mat.r[3].m128_f32[0] = -1.0f;
 		constMapTransform->mat.r[3].m128_f32[1] = 1.0f;*/
@@ -713,72 +671,22 @@ void Triangle::Update(ID3D12Device* device, BYTE* keys) {
 	}
 
 
-	//// スケーリング行列
-	//XMMATRIX matScale;
-	//matScale = XMMatrixScaling(scale.x, scale.y, scale.z);
 
-	//// 回転行列
-	//XMMATRIX matRot = XMMatrixIdentity();
-	//matRot *= XMMatrixRotationZ(XMConvertToRadians(rotation.z));	//Z軸に0度回転
-	//matRot *= XMMatrixRotationX(XMConvertToRadians(rotation.x));	//X軸に15度回転
-	//matRot *= XMMatrixRotationY(XMConvertToRadians(rotation.y));	//Y軸に30度回転
-
-	//// スケーリング行列
-	//XMMATRIX matTrans;
-	//matTrans = XMMatrixTranslation(position.x, position.y, position.z);
-
-	////ワールド変換行列
-	//matWorld = XMMatrixIdentity();
-	//matWorld *= matScale;
-	//matWorld *= matRot;
-	//matWorld *= matTrans;
-
-	//// スケーリング行列
-	//XMMATRIX matScale1;
-	//matScale1 = XMMatrixScaling(scale1.x, scale1.y, scale1.z);
-
-	//// 回転行列
-	//XMMATRIX matRot1 = XMMatrixIdentity();
-	//matRot1 *= XMMatrixRotationZ(XMConvertToRadians(rotation1.z));	//Z軸に0度回転
-	//matRot1 *= XMMatrixRotationX(XMConvertToRadians(rotation1.x));	//X軸に15度回転
-	//matRot1 *= XMMatrixRotationY(XMConvertToRadians(rotation1.y));	//Y軸に30度回転
-
-	//// スケーリング行列
-	//XMMATRIX matTrans1;
-	//matTrans1 = XMMatrixTranslation(position1.x, position1.y, position1.z);
-
-	////ワールド変換行列
-	//matWorld1 = XMMatrixIdentity();
-	//matWorld1 *= matScale1;
-	//matWorld1 *= matRot1;
-	//matWorld1 *= matTrans1;
-
-	//// 定数バッファに転送
-	//constMapTransform0->mat = matWorld * matView * matProjection;
-	//// 定数バッファに転送
-	//constMapTransform1->mat = matWorld1 * matView * matProjection;
-
-
-	/*
-	if (keys[DIK_D]||keys[DIK_A]) {
-		if (keys[DIK_D]) {
-			angle += Affin::radConvert(1.0f);
-		}
-		else if (keys[DIK_A]) {
-			angle -= Affin::radConvert(1.0f);
-		}
-
-		// angleラジアンだけy軸周りに回転。半径は-100
-		eye.x = -100 * sinf(angle);
-		eye.z = -100 * cosf(angle);
-		matView = XMMatrixLookAtLH(XMLoadFloat3(&eye), XMLoadFloat3(&target), XMLoadFloat3(&up));
-
+	
+	// 値を書き込むと自動的に転送される
+	constMapMaterial->color = XMFLOAT4(R.x, 0, 0, 1.0f);	// RGBAで半透明の赤
+	
+	if (R.x > 1.0f) {
+		R.y = 1;
+	}else if (R.x < 0.0f) {
+		R.y = 0;
 	}
 
-	// 定数バッファに転送
-	constMapTransform->mat = matView * matProjection; */
-
-
+	if ( R.y==0) {
+		R.x += 0.01;		
+	}else if( R.y == 1) {
+		R.x -=0.01;
+	}
 }
 
 void Triangle::Draw(ID3D12GraphicsCommandList* commandList) {
@@ -822,9 +730,8 @@ void Triangle::Draw(ID3D12GraphicsCommandList* commandList) {
 		DrawObject3d(&object3ds[i], commandList, vbView, ibView, _countof(indices));
 	}
 
-	// 定数バッファビュー（CBV）の設定コマンド
+	//// 定数バッファビュー（CBV）の設定コマンド
 	//commandList->SetGraphicsRootConstantBufferView(2, constBuffTransform0->GetGPUVirtualAddress());
-
 	//// 描画コマンド （インデックスバッファ＆頂点バッファ）
 	//commandList->DrawIndexedInstanced(_countof(indices), 1, 0, 0, 0);
 

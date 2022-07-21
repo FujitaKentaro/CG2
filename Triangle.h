@@ -21,19 +21,13 @@ public:
 	ID3D12PipelineState* pipelineState = nullptr;
 	// 定数バッファ
 	ID3D12Resource* constBuffMaterial = nullptr;
-	
+	// 定数バッファのマッピング
+	ConstBufferDataMaterial* constMapMaterial = nullptr;
 
 	//3Dオブジェクトの数
-	static const size_t kObjectCount = 50;
+	static const size_t kObjectCount = 1;
 	// 3Dオブジェクトの配列
 	Object3d object3ds[kObjectCount];
-
-	// 定数バッファの生成0
-	/*ID3D12Resource* constBuffTransform0 = nullptr;
-	ConstBufferDataTransform* constMapTransform0 = nullptr;
-	// 定数バッファの生成1
-	ID3D12Resource* constBuffTransform1 = nullptr;
-	ConstBufferDataTransform* constMapTransform1 = nullptr;*/
 
 
 	//GPU上のバッファに対応した仮想メモリ
@@ -68,11 +62,11 @@ public:
 	XMFLOAT3 up;		// 上方向ベクトル
 	//カメラの回転核
 	float angle = 0.0f;
-
+	Vector2 R = { 0.0f,0 };
 public:
 
 	// 頂点データ
-	Vertex vertices[24] ;
+	Vertex vertices[25];
 	// インデックスデータ
 	uint16_t indices[36] = {	
 		0,1,2,	
