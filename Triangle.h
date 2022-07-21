@@ -42,15 +42,15 @@ public:
 	XMMATRIX matWorld1;
 
 	//座標
-	XMFLOAT3 scale	 = { 1.0f,1.0f,1.0f };
+	XMFLOAT3 scale = { 1.0f,1.0f,1.0f };
 	XMFLOAT3 position = { 0.0f,0.0f,0.0f };
 	XMFLOAT3 rotation = { 0.0f,0.0f,0.0f };
-	
+
 	//座標1
 	XMFLOAT3 scale1 = { 1.0f,1.0f,1.0f };
 	XMFLOAT3 position1 = { 0.0f,0.0f,0.0f };
 	XMFLOAT3 rotation1 = { 0.0f,0.0f,0.0f };
-	
+
 
 	// 射影変換行列の計算
 	XMMATRIX matProjection;
@@ -62,16 +62,18 @@ public:
 	XMFLOAT3 up;		// 上方向ベクトル
 	//カメラの回転核
 	float angle = 0.0f;
-	Vector2 R = { 0.0f,0 };
+	Vector3 R = { 0.0f,0 ,0};
+	Vector3 G = { 0.5f,0 ,0};
+	Vector3 B = { 1.0f,0 ,0};
 public:
 
 	// 頂点データ
 	Vertex vertices[25];
 	// インデックスデータ
-	uint16_t indices[36] = {	
-		0,1,2,	
-		2,1,3,	
-	
+	uint16_t indices[36] = {
+		0,1,2,
+		2,1,3,
+
 		6,5,4,
 		5,6,7,
 
@@ -85,16 +87,16 @@ public:
 		18,17,19,
 
 		22,21,20,
-		21,22,23	
+		21,22,23
 	};
 
-public:	
-	
+public:
+
 	Triangle(Vertex vertices[]);
 	Triangle();
 	~Triangle();
-	
+
 	void Init(ID3D12Device* device);
 	void Update(ID3D12Device* device, BYTE* keys);
-	void Draw( ID3D12GraphicsCommandList* commandList);
+	void Draw(ID3D12GraphicsCommandList* commandList);
 };

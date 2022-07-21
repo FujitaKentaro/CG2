@@ -218,7 +218,7 @@ void Triangle::Init(ID3D12Device* device) {
 
 	// ラスタライザの設定
 	pipelineDesc.RasterizerState.CullMode = D3D12_CULL_MODE_NONE; // カリングしない
-	pipelineDesc.RasterizerState.CullMode = D3D12_CULL_MODE_BACK; // 背面のカリングする
+	//pipelineDesc.RasterizerState.CullMode = D3D12_CULL_MODE_BACK; // 背面のカリングする
 	pipelineDesc.RasterizerState.FillMode = D3D12_FILL_MODE_SOLID; // ポリゴン内塗りつぶし
 	//pipelineDesc.RasterizerState.FillMode = D3D12_FILL_MODE_WIREFRAME; // ワイヤーフレーム
 	pipelineDesc.RasterizerState.DepthClipEnable = true; // 深度クリッピングを有効に
@@ -631,40 +631,7 @@ void Triangle::Update(ID3D12Device* device, BYTE* keys) {
 	// NULLポインタチェック
 	assert(keys);
 
-	if (keys[DIK_UP] || keys[DIK_DOWN] || keys[DIK_RIGHT] || keys[DIK_LEFT]) {
-		if (keys[DIK_UP]) {
-			object3ds[0].position.z += 1.0f;
-		}
-		else if (keys[DIK_DOWN]) {
-			object3ds[0].position.z -= 1.0f;
-		}
-		if (keys[DIK_RIGHT]) {
-			object3ds[0].position.x += 1.0f;
-		}
-		else if (keys[DIK_LEFT]) {
-			object3ds[0].position.x -= 1.0f;
-		}
-	}
-	if (keys[DIK_Q] || keys[DIK_E] || keys[DIK_A] || keys[DIK_D] || keys[DIK_Z] || keys[DIK_C]) {
-		if (keys[DIK_Q]) {
-			object3ds[0].rotation.x += 0.01f;
-		}
-		else if (keys[DIK_E]) {
-			object3ds[0].rotation.x -= 0.01f;
-		}
-		if (keys[DIK_A]) {
-			object3ds[0].rotation.y += 0.01f;
-		}
-		else if (keys[DIK_D]) {
-			object3ds[0].rotation.y -= 0.01f;
-		}
-		if (keys[DIK_Z]) {
-			object3ds[0].rotation.z += 0.01f;
-		}
-		else if (keys[DIK_C]) {
-			object3ds[0].rotation.z -= 0.01f;
-		}
-	}
+	
 
 	for (size_t i = 0; i < _countof(object3ds); i++) {
 		UpdateObject3d(&object3ds[i], matView, matProjection);
@@ -674,18 +641,42 @@ void Triangle::Update(ID3D12Device* device, BYTE* keys) {
 
 	
 	// 値を書き込むと自動的に転送される
-	constMapMaterial->color = XMFLOAT4(R.x, 0, 0, 1.0f);	// RGBAで半透明の赤
+	constMapMaterial->color = XMFLOAT4(R.x, G.x, B.x, 1.0f);	// RGBAで半透明の赤
 	
+	// Red のブレス
 	if (R.x > 1.0f) {
 		R.y = 1;
 	}else if (R.x < 0.0f) {
 		R.y = 0;
 	}
-
 	if ( R.y==0) {
 		R.x += 0.01;		
 	}else if( R.y == 1) {
 		R.x -=0.01;
+	}
+	// Green のブレス
+	if (G.x > 1.5f) {
+		G.y = 1;
+	}else if (G.x < 0.0f) {
+		G.y = 0;
+	}
+	if ( G.y==0) {
+		G.x += 0.01;		
+	}else if( G.y == 1) {
+		G.x -=0.01;
+	}
+	// Blue のブレス
+	if (B.x > 0.4f) {
+		B.y = 1;
+	}
+	else if (B.x < 0.0f) {
+		B.y = 0;
+	}
+	if (B.y == 0) {
+		B.x += 0.01;
+	}
+	else if (B.y == 1) {
+		B.x -= 0.01;
 	}
 }
 

@@ -285,54 +285,54 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 #pragma region 描画初期化処理
 
 	//頂点
-	//Vertex vertex[] = {
-	//	// 前
-	//	{{-5.0f,-5.0f, -5.0f},{}, {0.0f, 1.0f}/* 左下*/},
-	//	{{-5.0f, 5.0f, -5.0f},{}, {0.0f, 0.0f}/* 左上*/},
-	//	{{ 5.0f,-5.0f, -5.0f},{}, {1.0f, 1.0f}/* 右下*/},
-	//	{{ 5.0f, 5.0f, -5.0f},{}, {1.0f, 0.0f}/* 右上*/},
-	//	// 後ろ
-	//	{{-5.0f,-5.0f,  5.0f},{}, {0.0f, 1.0f}/* 左下*/},
-	//	{{-5.0f, 5.0f,  5.0f},{}, {0.0f, 0.0f}/* 左上*/},
-	//	{{ 5.0f,-5.0f,  5.0f},{}, {1.0f, 1.0f}/* 右下*/},
-	//	{{ 5.0f, 5.0f,  5.0f},{}, {1.0f, 0.0f}/* 右上*/},
-	//	// 左
-	//	{{-5.0f,-5.0f, -5.0f},{}, {1.0f, 1.0f}/* 左下*/},
-	//	{{-5.0f,-5.0f,  5.0f},{}, {0.0f, 1.0f}/* 左上*/},
-	//	{{-5.0f, 5.0f, -5.0f},{}, {1.0f, 0.0f}/* 右下*/},
-	//	{{-5.0f, 5.0f,  5.0f},{}, {0.0f, 0.0f}/* 右上*/},
-	//	// 右
-	//	{{ 5.0f,-5.0f, -5.0f},{}, {1.0f, 1.0f}/* 左下*/},
-	//	{{ 5.0f,-5.0f,  5.0f},{}, {0.0f, 1.0f}/* 左上*/},
-	//	{{ 5.0f, 5.0f, -5.0f},{}, {1.0f, 0.0f}/* 右下*/},
-	//	{{ 5.0f, 5.0f,  5.0f},{}, {0.0f, 0.0f}/* 右上*/},
-	//	// 下
-	//	{{-5.0f, 5.0f, -5.0f},{}, {0.0f, 1.0f}/* 左下*/},
-	//	{{-5.0f, 5.0f,  5.0f},{}, {0.0f, 0.0f}/* 左上*/},
-	//	{{ 5.0f, 5.0f, -5.0f},{}, {1.0f, 1.0f}/* 右下*/},
-	//	{{ 5.0f, 5.0f,  5.0f},{}, {1.0f, 0.0f}/* 右上*/},
-	//	// 上
-	//	{{-5.0f,-5.0f, -5.0f},{}, {0.0f, 1.0f}/* 左下*/},
-	//	{{-5.0f,-5.0f,  5.0f},{}, {0.0f, 0.0f}/* 左上*/},
-	//	{{ 5.0f,-5.0f, -5.0f},{}, {1.0f, 1.0f}/* 右下*/},
-	//	{{ 5.0f,-5.0f,  5.0f},{}, {1.0f, 0.0f}/* 右上*/},
-
-	//};
-	Vertex vertex2[3] = {
+	Vertex vertex[] = {
 		// 前
-		{ {-5.0f, -5.0f, -10.0f}, {}, { 0.0f, 1.0f }/* 左下*/},
-		{ {-5.0f, 5.0f, -10.0f},{}, {0.0f, 0.0f}/* 左上*/ },
-		{ { 5.0f,-5.0f, -10.0f},{}, {1.0f, 1.0f}/* 右下*/ },
-		
+		{{-5.0f,-5.0f, -5.0f},{}, {0.0f, 1.0f}/* 左下*/},
+		{{-5.0f, 5.0f, -5.0f},{}, {0.0f, 0.0f}/* 左上*/},
+		{{ 5.0f,-5.0f, -5.0f},{}, {1.0f, 1.0f}/* 右下*/},
+		{{ 5.0f, 5.0f, -5.0f},{}, {1.0f, 0.0f}/* 右上*/},
+		// 後ろ
+		{{-5.0f,-5.0f,  5.0f},{}, {0.0f, 1.0f}/* 左下*/},
+		{{-5.0f, 5.0f,  5.0f},{}, {0.0f, 0.0f}/* 左上*/},
+		{{ 5.0f,-5.0f,  5.0f},{}, {1.0f, 1.0f}/* 右下*/},
+		{{ 5.0f, 5.0f,  5.0f},{}, {1.0f, 0.0f}/* 右上*/},
+		// 左
+		{{-5.0f,-5.0f, -5.0f},{}, {1.0f, 1.0f}/* 左下*/},
+		{{-5.0f,-5.0f,  5.0f},{}, {0.0f, 1.0f}/* 左上*/},
+		{{-5.0f, 5.0f, -5.0f},{}, {1.0f, 0.0f}/* 右下*/},
+		{{-5.0f, 5.0f,  5.0f},{}, {0.0f, 0.0f}/* 右上*/},
+		// 右
+		{{ 5.0f,-5.0f, -5.0f},{}, {1.0f, 1.0f}/* 左下*/},
+		{{ 5.0f,-5.0f,  5.0f},{}, {0.0f, 1.0f}/* 左上*/},
+		{{ 5.0f, 5.0f, -5.0f},{}, {1.0f, 0.0f}/* 右下*/},
+		{{ 5.0f, 5.0f,  5.0f},{}, {0.0f, 0.0f}/* 右上*/},
+		// 下
+		{{-5.0f, 5.0f, -5.0f},{}, {0.0f, 1.0f}/* 左下*/},
+		{{-5.0f, 5.0f,  5.0f},{}, {0.0f, 0.0f}/* 左上*/},
+		{{ 5.0f, 5.0f, -5.0f},{}, {1.0f, 1.0f}/* 右下*/},
+		{{ 5.0f, 5.0f,  5.0f},{}, {1.0f, 0.0f}/* 右上*/},
+		// 上
+		{{-5.0f,-5.0f, -5.0f},{}, {0.0f, 1.0f}/* 左下*/},
+		{{-5.0f,-5.0f,  5.0f},{}, {0.0f, 0.0f}/* 左上*/},
+		{{ 5.0f,-5.0f, -5.0f},{}, {1.0f, 1.0f}/* 右下*/},
+		{{ 5.0f,-5.0f,  5.0f},{}, {1.0f, 0.0f}/* 右上*/},
+
+	};
+	Vertex vertex2[4] = {
+		// 前
+		{ {-10.0f, -10.0f, -10.0f}, {}, { 0.0f, 1.0f }/* 左下*/},
+		{ {-10.0f, 0.0f, -10.0f},{}, {0.0f, 0.0f}/* 左上*/ },
+		{ { 0.0f,-10.0f, -10.0f},{}, {1.0f, 1.0f}/* 右下*/ },
+		{ { 0.0f,-10.0f, -10.0f},{}, {1.0f, 1.0f}/* 右下*/ },
 	};
 
 
 	//三角形生成--箱
-	//Triangle* triangle;
+	Triangle* triangle;
 
-	//triangle = new Triangle(vertex);
+	triangle = new Triangle(vertex);
 
-	//triangle->Init(device);
+	triangle->Init(device);
 
 	//三角形生成
 	Triangle* triangle2;
@@ -411,9 +411,42 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 #pragma endregion 更新処理
 
+		if (keys[DIK_UP] || keys[DIK_DOWN] || keys[DIK_RIGHT] || keys[DIK_LEFT]) {
+			if (keys[DIK_UP]) {
+				triangle->object3ds[0].position.z += 1.0f;
+			}
+			else if (keys[DIK_DOWN]) {
+				triangle->object3ds[0].position.z -= 1.0f;
+			}
+			if (keys[DIK_RIGHT]) {
+				triangle->object3ds[0].position.x += 1.0f;
+			}
+			else if (keys[DIK_LEFT]) {
+				triangle->object3ds[0].position.x -= 1.0f;
+			}
+		}
+		if (keys[DIK_Q] || keys[DIK_E] || keys[DIK_A] || keys[DIK_D] || keys[DIK_Z] || keys[DIK_C]) {
+			if (keys[DIK_Q]) {
+				triangle->object3ds[0].rotation.x += 0.01f;
+			}
+			else if (keys[DIK_E]) {
+				triangle->object3ds[0].rotation.x -= 0.01f;
+			}
+			if (keys[DIK_A]) {
+				triangle->object3ds[0].rotation.y += 0.01f;
+			}
+			else if (keys[DIK_D]) {
+				triangle->object3ds[0].rotation.y -= 0.01f;
+			}
+			if (keys[DIK_Z]) {
+				triangle->object3ds[0].rotation.z += 0.01f;
+			}
+			else if (keys[DIK_C]) {
+				triangle->object3ds[0].rotation.z -= 0.01f;
+			}
+		}
 
-
-		//triangle->Update(device, keys);
+		triangle->Update(device, keys);
 
 		triangle2->Update(device, keys);
 
@@ -451,7 +484,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 
 
-		//triangle->Draw(commandList);
+		triangle->Draw(commandList);
 
 		triangle2->Draw(commandList);
 
