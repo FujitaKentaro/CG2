@@ -1,5 +1,5 @@
 #include "World.h"
-#include "Triangle.h"
+#include "object/Triangle.h"
 
 LRESULT WindowProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam) {
 	//メッセージに応じてゲーム固有の処理を行う
@@ -318,7 +318,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		{{ 5.0f,-5.0f,  5.0f},{}, {1.0f, 0.0f}/* 右上*/},
 
 	};
-	Vertex vertex2[4] = {
+	Vertex vertex2[] = {
 		// 前
 		{ {-10.0f, -10.0f, -10.0f}, {}, { 0.0f, 1.0f }/* 左下*/},
 		{ {-10.0f, 0.0f, -10.0f},{}, {0.0f, 0.0f}/* 左上*/ },
@@ -411,40 +411,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 #pragma endregion 更新処理
 
-		if (keys[DIK_UP] || keys[DIK_DOWN] || keys[DIK_RIGHT] || keys[DIK_LEFT]) {
-			if (keys[DIK_UP]) {
-				triangle->object3ds[0].position.z += 1.0f;
-			}
-			else if (keys[DIK_DOWN]) {
-				triangle->object3ds[0].position.z -= 1.0f;
-			}
-			if (keys[DIK_RIGHT]) {
-				triangle->object3ds[0].position.x += 1.0f;
-			}
-			else if (keys[DIK_LEFT]) {
-				triangle->object3ds[0].position.x -= 1.0f;
-			}
-		}
-		if (keys[DIK_Q] || keys[DIK_E] || keys[DIK_A] || keys[DIK_D] || keys[DIK_Z] || keys[DIK_C]) {
-			if (keys[DIK_Q]) {
-				triangle->object3ds[0].rotation.x += 0.01f;
-			}
-			else if (keys[DIK_E]) {
-				triangle->object3ds[0].rotation.x -= 0.01f;
-			}
-			if (keys[DIK_A]) {
-				triangle->object3ds[0].rotation.y += 0.01f;
-			}
-			else if (keys[DIK_D]) {
-				triangle->object3ds[0].rotation.y -= 0.01f;
-			}
-			if (keys[DIK_Z]) {
-				triangle->object3ds[0].rotation.z += 0.01f;
-			}
-			else if (keys[DIK_C]) {
-				triangle->object3ds[0].rotation.z -= 0.01f;
-			}
-		}
+		
 
 		triangle->Update(device, keys);
 
@@ -510,8 +477,10 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		if (fence->GetCompletedValue() != fenceVal) {
 			HANDLE event = CreateEvent(nullptr, false, false, nullptr);
 			fence->SetEventOnCompletion(fenceVal, event);
-			WaitForSingleObject(event, INFINITE);
-			CloseHandle(event);
+			if (event != 0) {
+				WaitForSingleObject(event, INFINITE);
+				CloseHandle(event);
+			}
 		}
 
 		// キューをクリア
@@ -526,7 +495,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	UnregisterClass(w.lpszClassName, w.hInstance);
 
 
-	//delete triangle;
+	delete triangle;
 
 	delete triangle2;
 

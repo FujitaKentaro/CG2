@@ -631,7 +631,40 @@ void Triangle::Update(ID3D12Device* device, BYTE* keys) {
 	// NULLポインタチェック
 	assert(keys);
 
-	
+	if (keys[DIK_UP] || keys[DIK_DOWN] || keys[DIK_RIGHT] || keys[DIK_LEFT]) {
+		if (keys[DIK_UP]) {
+			object3ds[0].position.z += 1.0f;
+		}
+		else if (keys[DIK_DOWN]) {
+			object3ds[0].position.z -= 1.0f;
+		}
+		if (keys[DIK_RIGHT]) {
+			object3ds[0].position.x += 1.0f;
+		}
+		else if (keys[DIK_LEFT]) {
+			object3ds[0].position.x -= 1.0f;
+		}
+	}
+	if (keys[DIK_Q] || keys[DIK_E] || keys[DIK_A] || keys[DIK_D] || keys[DIK_Z] || keys[DIK_C]) {
+		if (keys[DIK_Q]) {
+			object3ds[0].rotation.x += 0.01f;
+		}
+		else if (keys[DIK_E]) {
+			object3ds[0].rotation.x -= 0.01f;
+		}
+		if (keys[DIK_A]) {
+			object3ds[0].rotation.y += 0.01f;
+		}
+		else if (keys[DIK_D]) {
+			object3ds[0].rotation.y -= 0.01f;
+		}
+		if (keys[DIK_Z]) {
+			object3ds[0].rotation.z += 0.01f;
+		}
+		else if (keys[DIK_C]) {
+			object3ds[0].rotation.z -= 0.01f;
+		}
+	}
 
 	for (size_t i = 0; i < _countof(object3ds); i++) {
 		UpdateObject3d(&object3ds[i], matView, matProjection);
