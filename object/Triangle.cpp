@@ -684,18 +684,26 @@ void Triangle::Update(ID3D12Device* device, BYTE* keys) {
 		focalLengs = 10;
 
 	}
+	if (keys[DIK_NUMPAD0] || keys[DIK_NUMPAD1]) {
+		if (keys[DIK_NUMPAD0]) {
+			focalLengs = 300.0f;
+		}
+		else if (keys[DIK_NUMPAD1]) {
+			focalLengs = 100.0f;
+		}
+	}
 	//透視投影変換
 		// 射影変換行列の計算
 	matProjection =
 		XMMatrixPerspectiveFovLH(
-			Camera::FieldOfViewY(focalLengs,sensor),				// 上下画角45度
+			Camera::FieldOfViewY(focalLengs,sensor),
 			(float)window_width / window_height,	// アスペクト比 （ 画面横幅/画面縦幅 ）
 			0.1f, 1500.0f							// 前端、奥端
 		);
 	// ビュー変換行列
 
 	eye = { 0,0,1000};	// 視点座標
-	target = { object3ds[0].position.x,object3ds[0].position.y,object3ds[0].position.z};	// 注視点座標
+	target = { -20,0,0};	// 注視点座標
 	up = { 0, 1, 0 };		// 上方向ベクトル
 	matView = XMMatrixLookAtLH(XMLoadFloat3(&eye), XMLoadFloat3(&target), XMLoadFloat3(&up));
 
