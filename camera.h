@@ -7,4 +7,4 @@ namespace Camera {
 
 	float FieldOfViewY(float focalLengs, float sensor);
 	
-}// namespace Affin
+}// namespace Camera
