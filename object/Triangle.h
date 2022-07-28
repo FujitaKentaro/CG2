@@ -26,9 +26,10 @@ public:
 	ConstBufferDataMaterial* constMapMaterial = nullptr;
 
 	//3Dオブジェクトの数
-	static const size_t kObjectCount = 1;
+	static const size_t kObjectCount = 50;
 	// 3Dオブジェクトの配列
 	Object3d object3ds[kObjectCount];
+
 
 
 	//GPU上のバッファに対応した仮想メモリ
@@ -61,10 +62,12 @@ public:
 	XMFLOAT3 eye;	// 視点座標
 	XMFLOAT3 target;	// 注視点座標
 	XMFLOAT3 up;		// 上方向ベクトル
-	//カメラの回転核
+
+	//カメラ用変数
 	float focalLengs=200;
 	float sensor = 24;
 	float angle = 0.0f;
+
 	Vector3 R = { 0.0f,0 ,0};
 	Vector3 G = { 0.5f,0 ,0};
 	Vector3 B = { 1.0f,0 ,0};

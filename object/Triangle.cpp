@@ -414,7 +414,10 @@ void Triangle::Init(ID3D12Device* device) {
 				object3ds[i].position = { 0.0f,0.0f,-8.0f };
 			}
 		}
-		
+
+		// 親オブジェクトに対してZ軸回りに３０度回転
+		object3ds[0].rotation = { 0.0f,Affin::radConvert(90),0.0f};
+
 
 		//平行投影変換
 			// 単位行列を代入
