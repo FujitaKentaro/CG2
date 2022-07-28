@@ -1,5 +1,6 @@
 #pragma once
 #include "World.h"
+#include "camera.h"
 
 
 class Triangle
@@ -61,6 +62,8 @@ public:
 	XMFLOAT3 target;	// 注視点座標
 	XMFLOAT3 up;		// 上方向ベクトル
 	//カメラの回転核
+	float focalLengs=200;
+	float sensor = 24;
 	float angle = 0.0f;
 	Vector3 R = { 0.0f,0 ,0};
 	Vector3 G = { 0.5f,0 ,0};

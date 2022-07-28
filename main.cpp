@@ -318,13 +318,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		{{ 5.0f,-5.0f,  5.0f},{}, {1.0f, 0.0f}/* 右上*/},
 
 	};
-	Vertex vertex2[] = {
-		// 前
-		{ {-10.0f, -10.0f, -10.0f}, {}, { 0.0f, 1.0f }/* 左下*/},
-		{ {-10.0f, 0.0f, -10.0f},{}, {0.0f, 0.0f}/* 左上*/ },
-		{ { 0.0f,-10.0f, -10.0f},{}, {1.0f, 1.0f}/* 右下*/ },
-		{ { 0.0f,-10.0f, -10.0f},{}, {1.0f, 1.0f}/* 右下*/ },
-	};
+	
 
 
 	//三角形生成--箱
@@ -334,12 +328,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 	triangle->Init(device);
 
-	//三角形生成
-	Triangle* triangle2;
-
-	triangle2 = new Triangle(vertex2);
-
-	triangle2->Init(device);
+	
 
 
 #pragma endregion シェーダリソースビュー
@@ -415,7 +404,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 		triangle->Update(device, keys);
 
-		triangle2->Update(device, keys);
+		
 
 
 
@@ -453,7 +442,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 		triangle->Draw(commandList);
 
-		triangle2->Draw(commandList);
+		
 
 
 
@@ -497,7 +486,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 	delete triangle;
 
-	delete triangle2;
+
 
 	return 0;
 }
