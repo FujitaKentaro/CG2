@@ -42,7 +42,6 @@ void Triangle::Init(ID3D12Device* device) {
 	resDesc.Layout = D3D12_TEXTURE_LAYOUT_ROW_MAJOR;
 
 	//頂点バッファの生成
-	ID3D12Resource* vertBuff = nullptr;
 	result = device->CreateCommittedResource(
 		&heapProp,	//ヒープ設定
 		D3D12_HEAP_FLAG_NONE,
@@ -178,7 +177,7 @@ void Triangle::Init(ID3D12Device* device) {
 	resDesc.Layout = D3D12_TEXTURE_LAYOUT_ROW_MAJOR;
 
 	// インデックスバッファの生成
-	ID3D12Resource* indexBuff = nullptr;
+	
 	result = device->CreateCommittedResource(
 		&heapProp, // ヒープ設定
 		D3D12_HEAP_FLAG_NONE,
@@ -556,7 +555,7 @@ void Triangle::Init(ID3D12Device* device) {
 	textureResourceDesc.SampleDesc.Count = 1;
 
 	// テクスチャバッファの生成
-	ID3D12Resource* texBuff;
+	ComPtr<ID3D12Resource> texBuff;
 	result = device->CreateCommittedResource(
 		&textureHeapProp,
 		D3D12_HEAP_FLAG_NONE,
@@ -575,7 +574,7 @@ void Triangle::Init(ID3D12Device* device) {
 	textureResourceDesc2.MipLevels = (UINT)metadata2.mipLevels;
 	textureResourceDesc2.SampleDesc.Count = 1;
 	// テクスチャバッファの生成
-	ID3D12Resource* texBuff2;
+	//ID3D12Resource* texBuff2;
 	result = device->CreateCommittedResource(
 		&textureHeapProp,
 		D3D12_HEAP_FLAG_NONE,
@@ -652,7 +651,7 @@ void Triangle::Init(ID3D12Device* device) {
 	srvDesc.Texture2D.MipLevels = resDesc.MipLevels;
 
 	// ハンドルの指す位置にシェーダーリソースビュー作成
-	device->CreateShaderResourceView(texBuff, &srvDesc, srvHandle);
+	device->CreateShaderResourceView(texBuff.Get(), &srvDesc, srvHandle);
 
 	// 一つハンドルを進める
 	incrementSize = device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
@@ -666,7 +665,7 @@ void Triangle::Init(ID3D12Device* device) {
 	srvDesc2.Texture2D.MipLevels = textureResourceDesc2.MipLevels;
 
 	// ハンドルの指す位置にシェーダーリソースビュー作成
-	device->CreateShaderResourceView(texBuff2, &srvDesc2, srvHandle);
+	device->CreateShaderResourceView(texBuff2.Get(), &srvDesc2, srvHandle);
 
 }
 

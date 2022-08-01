@@ -40,6 +40,12 @@ public:
 	Vertex* vertMap = nullptr;
 	// 設定を元にSRV用デスクリプタヒープを生成
 	ComPtr<ID3D12DescriptorHeap> srvHeap;
+	// インデックスバッファの生成
+	ComPtr<ID3D12Resource> indexBuff;
+	//頂点バッファの生成
+	ComPtr<ID3D12Resource> vertBuff ;
+	// テクスチャバッファの生成
+	ComPtr<ID3D12Resource> texBuff2;
 	// 
 	UINT incrementSize;
 
