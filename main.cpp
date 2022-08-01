@@ -16,7 +16,8 @@ LRESULT WindowProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam) {
 }
 
 //Windousアプリでのエントリーポイント（main関数）
-int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
+INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
+	PSTR lpCmdLine, INT nCmdShow) {
 
 #pragma region WindousAPI初期化処理
 
@@ -379,7 +380,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 		// レンダーターゲットビューのハンドルを取得
 		D3D12_CPU_DESCRIPTOR_HANDLE rtvHandle = rtvHeap->GetCPUDescriptorHandleForHeapStart();
-		rtvHandle.ptr += bbIndex * device->GetDescriptorHandleIncrementSize(rtvHeapDesc.Type);
+		rtvHandle.ptr += static_cast<unsigned long long>(bbIndex) * device->GetDescriptorHandleIncrementSize(rtvHeapDesc.Type);
 		//commandList->OMSetRenderTargets(1, &rtvHandle, false, nullptr);
 
 		// 深度ステンシルビュー用デスクリプターヒープのハンドルを取得

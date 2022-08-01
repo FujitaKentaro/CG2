@@ -13,7 +13,9 @@
 //#include "math/Affin.h"
 #include <wrl.h>
 
-#define DIRECTINPUT_VERSION		0x0800		//DirectInputのバージョン指定
+#undef DIRECTINPUT_VERSION
+
+#define DIRECTINPUT_VERSION	0x0800		//DirectInputのバージョン指定
 
 #pragma comment(lib,"d3dcompiler.lib")
 #pragma comment(lib,"dinput8.lib")
@@ -62,7 +64,12 @@ struct Object3d {
 	XMFLOAT3 position = { 0,0,0 };
 
 	//ワールド変換行列
-	XMMATRIX matWorld ;
+	XMMATRIX matWorld = {
+		{0,0,0,0},
+		{0,0,0,0},
+		{0,0,0,0},
+		{0,0,0,0}
+};
 	// 親オブジェクトへのポインタ
 	Object3d* parent = nullptr;
 
