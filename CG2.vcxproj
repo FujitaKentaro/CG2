@@ -143,6 +143,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="base\WinApp.cpp" />
     <ClCompile Include="camera.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="math\Affin.cpp" />
@@ -174,6 +175,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="base\WinApp.h" />
     <ClInclude Include="camera.h" />
     <ClInclude Include="math\Affin.h" />
     <ClInclude Include="math\Matrix4.h" />

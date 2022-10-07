@@ -25,6 +25,12 @@
     <Filter Include="ヘッダー ファイル\object">
       <UniqueIdentifier>{6a50475f-742a-4861-8d28-9c1296fdd140}</UniqueIdentifier>
     </Filter>
+    <Filter Include="ヘッダー ファイル\base">
+      <UniqueIdentifier>{498ad287-4f46-4744-8abe-14e1e212cce2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\base">
+      <UniqueIdentifier>{63cfc245-c95d-4492-8af2-386f2ea0004b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -47,6 +53,9 @@
     </ClCompile>
     <ClCompile Include="camera.cpp">
       <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="base\WinApp.cpp">
+      <Filter>ソース ファイル\base</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -77,6 +86,9 @@
     </ClInclude>
     <ClInclude Include="camera.h">
       <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="base\WinApp.h">
+      <Filter>ヘッダー ファイル\base</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
