@@ -1,5 +1,6 @@
 #pragma once
 #include "World.h"
+#include "Input/Input.h"
 #include "camera.h"
 
 
@@ -133,6 +134,6 @@ public:
 	~Triangle();
 
 	void Init(ID3D12Device* device);
-	void Update(ID3D12Device* device, BYTE* keys);
+	void Update(ID3D12Device* device, Input* input);
 	void Draw(ID3D12GraphicsCommandList* commandList);
 };

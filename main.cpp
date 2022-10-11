@@ -386,7 +386,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 		
 
-		triangle->Update(device, keys);
+		triangle->Update(device, input);
 
 		
 
