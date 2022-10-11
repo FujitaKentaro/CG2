@@ -1,5 +1,4 @@
 #pragma once
-#pragma once
 class Vector3
 {
 public:
@@ -20,6 +19,7 @@ public:
 	Vector3& nomalize();
 	float dot(const Vector3& v) const;
 	Vector3 cross(const Vector3& v) const;
+	const Vector3 lerp(const Vector3& start, const Vector3& end, const float t);
 
 	Vector3 operator+() const;
 	Vector3 operator-() const;
