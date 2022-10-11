@@ -633,50 +633,50 @@ void Triangle::Init(ID3D12Device* device) {
 
 }
 
-void Triangle::Update(ID3D12Device* device, BYTE* keys) {
+void Triangle::Update(ID3D12Device* device, Input* input) {
 	// NULLポインタチェック
-	assert(keys);
+	assert(input);
 
-	if (keys[DIK_UP] || keys[DIK_DOWN] || keys[DIK_RIGHT] || keys[DIK_LEFT]) {
-		if (keys[DIK_UP]) {
+	if (input->PushKey(DIK_UP) || input->PushKey(DIK_DOWN) || input->PushKey(DIK_RIGHT) || input->PushKey(DIK_LEFT)) {
+		if (input->PushKey(DIK_UP)) {
 			object3ds[0].position.z += 1.0f;
 		}
-		else if (keys[DIK_DOWN]) {
+		else if (input->PushKey(DIK_DOWN)) {
 			object3ds[0].position.z -= 1.0f;
 		}
-		if (keys[DIK_RIGHT]) {
+		if (input->PushKey(DIK_RIGHT)) {
 			object3ds[0].position.x += 1.0f;
 		}
-		else if (keys[DIK_LEFT]) {
+		else if (input->PushKey(DIK_LEFT)) {
 			object3ds[0].position.x -= 1.0f;
 		}
 	}
-	if (keys[DIK_Q] || keys[DIK_E] || keys[DIK_A] || keys[DIK_D] || keys[DIK_Z] || keys[DIK_C]) {
-		if (keys[DIK_Q]) {
+	if (input->PushKey(DIK_Q) || input->PushKey(DIK_E) || input->PushKey(DIK_A) || input->PushKey(DIK_D) || input->PushKey(DIK_Z) || input->PushKey(DIK_C)) {
+		if (input->PushKey(DIK_Q)) {
 			object3ds[0].rotation.x += 0.01f;
 		}
-		else if (keys[DIK_E]) {
+		else if (input->PushKey(DIK_E)) {
 			object3ds[0].rotation.x -= 0.01f;
 		}
-		if (keys[DIK_A]) {
+		if (input->PushKey(DIK_A)) {
 			object3ds[0].rotation.y += 0.01f;
 		}
-		else if (keys[DIK_D]) {
+		else if (input->PushKey(DIK_D)) {
 			object3ds[0].rotation.y -= 0.01f;
 		}
-		if (keys[DIK_Z]) {
+		if (input->PushKey(DIK_Z)) {
 			object3ds[0].rotation.z += 0.01f;
 		}
-		else if (keys[DIK_C]) {
+		else if (input->PushKey(DIK_C)) {
 			object3ds[0].rotation.z -= 0.01f;
 		}
 	}
 
-	if (keys[DIK_J] || keys[DIK_K]) {
-		if (keys[DIK_J]) {
+	if (input->PushKey(DIK_J) || input->PushKey(DIK_K)) {
+		if (input->PushKey(DIK_J)) {
 			focalLengs += 1.0f;
 		}
-		else if (keys[DIK_K]) {
+		else if (input->PushKey(DIK_K)) {
 			focalLengs -= 1.0f;
 		}
 	}
@@ -684,11 +684,11 @@ void Triangle::Update(ID3D12Device* device, BYTE* keys) {
 		focalLengs = 10;
 
 	}
-	if (keys[DIK_NUMPAD0] || keys[DIK_NUMPAD1]) {
-		if (keys[DIK_NUMPAD0]) {
+	if (input->PushKey(DIK_NUMPAD0) || input->PushKey(DIK_NUMPAD1)) {
+		if (input->PushKey(DIK_NUMPAD0)) {
 			focalLengs = 300.0f;
 		}
-		else if (keys[DIK_NUMPAD1]) {
+		else if (input->PushKey(DIK_NUMPAD1)) {
 			focalLengs = 100.0f;
 		}
 	}
