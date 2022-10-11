@@ -31,6 +31,12 @@
     <Filter Include="ソース ファイル\base">
       <UniqueIdentifier>{63cfc245-c95d-4492-8af2-386f2ea0004b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="ヘッダー ファイル\Input">
+      <UniqueIdentifier>{8bdebd42-167e-44b8-b386-fee1203a87a6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\Input">
+      <UniqueIdentifier>{22b4e54d-3073-434b-a933-1222e8307d5f}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -56,6 +62,12 @@
     </ClCompile>
     <ClCompile Include="base\WinApp.cpp">
       <Filter>ソース ファイル\base</Filter>
+    </ClCompile>
+    <ClCompile Include="base\DirectXCommon.cpp">
+      <Filter>ソース ファイル\base</Filter>
+    </ClCompile>
+    <ClCompile Include="Input\Input.cpp">
+      <Filter>ソース ファイル\Input</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -89,6 +101,12 @@
     </ClInclude>
     <ClInclude Include="base\WinApp.h">
       <Filter>ヘッダー ファイル\base</Filter>
+    </ClInclude>
+    <ClInclude Include="base\DirectXCommon.h">
+      <Filter>ヘッダー ファイル\base</Filter>
+    </ClInclude>
+    <ClInclude Include="Input\Input.h">
+      <Filter>ヘッダー ファイル\Input</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
