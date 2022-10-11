@@ -375,16 +375,12 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		commandList->ClearDepthStencilView(dsvHandle, D3D12_CLEAR_FLAG_DEPTH, 1.0f, 0, 0, nullptr);
 
 
-		//キーボード情報の取得開始
-		keyboard->Acquire();
-		//全キーの入力状態を取得する
-		BYTE keys[256] = {};
-		keyboard->GetDeviceState(sizeof(keys), keys);
+		
 
 		// 更新処理
 #pragma region キーボード情報の取得
 
-
+		input->Update();
 
 #pragma endregion 更新処理
 
