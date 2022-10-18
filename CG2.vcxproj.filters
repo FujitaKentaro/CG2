@@ -37,6 +37,12 @@
     <Filter Include="ソース ファイル\Input">
       <UniqueIdentifier>{22b4e54d-3073-434b-a933-1222e8307d5f}</UniqueIdentifier>
     </Filter>
+    <Filter Include="ヘッダー ファイル\3d">
+      <UniqueIdentifier>{4d36796c-19fa-4459-8d92-866827ece66b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\3d">
+      <UniqueIdentifier>{f771c051-21c6-42f6-833a-c124c7791023}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
