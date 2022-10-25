@@ -23,10 +23,6 @@ using namespace DirectX;
 // 円周率
 const float PI = 3.141592f;
 
-//ウィンドウサイズ
-const int window_width = 1280;	//横幅
-const int window_height = 720;	//縦幅
-
 // 定数バッファ用データ構造体（マテリアル）
 struct ConstBufferDataMaterial {
 	XMFLOAT4 color; // 色 (RGBA)

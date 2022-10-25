@@ -1,25 +1,22 @@
 #include "World.h"
 #include "Input/Input.h"
+#include "base/WinApp.h"
 #include "object/Triangle.h"
 
-LRESULT WindowProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam) {
-	//メッセージに応じてゲーム固有の処理を行う
-	switch (msg) {
-		//ウィンドウが破棄された
-	case WM_DESTROY:
-		//OSに対して、アプリの終了を伝える
-		PostQuitMessage(0);
-		return 0;
-	}
 
-	//標準のメッセージ処理を行う
-	return DefWindowProc(hwnd, msg, wparam, lparam);
-}
 
 //Windousアプリでのエントリーポイント（main関数）
 int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
+	// ポインタ
 	Input* input = nullptr;
+	WinApp* winApp = nullptr;
+
+	// NEW
+	input = new Input;
+	winApp = new WinApp;
+
+	winApp->Intialize();
 
 #pragma region WindousAPI初期化処理
 
@@ -27,38 +24,38 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	//OutputDebugStringA("Hello,DirectX!!\n");
 
 
-	//ウィンドウクラスの設定
-	WNDCLASSEX w{};
-	w.cbSize = sizeof(WNDCLASSEX);
-	w.lpfnWndProc = (WNDPROC)WindowProc;		//ウィンドウプロシージャを設定
-	w.lpszClassName = L"DirectXGame";			//ウィンドウクラス名
-	w.hInstance = GetModuleHandle(nullptr);		//ウィンドウハンドル
-	w.hCursor = LoadCursor(NULL, IDC_ARROW);	//カーソル指定
+	////ウィンドウクラスの設定
+	//WNDCLASSEX w{};
+	//w.cbSize = sizeof(WNDCLASSEX);
+	//w.lpfnWndProc = (WNDPROC)WindowProc;		//ウィンドウプロシージャを設定
+	//w.lpszClassName = L"DirectXGame";			//ウィンドウクラス名
+	//w.hInstance = GetModuleHandle(nullptr);		//ウィンドウハンドル
+	//w.hCursor = LoadCursor(NULL, IDC_ARROW);	//カーソル指定
 
-	//ウィンドウクラスをOSに登録する
-	RegisterClassEx(&w);
-	//ウィンドウサイズ｛　X座標　Y座標　横幅　縦幅　｝」
-	RECT wrc = { 0,0,window_width,window_height };
-	//自動でサイズを補正する
-	AdjustWindowRect(&wrc, WS_OVERLAPPEDWINDOW, false);
+	////ウィンドウクラスをOSに登録する
+	//RegisterClassEx(&w);
+	////ウィンドウサイズ｛　X座標　Y座標　横幅　縦幅　｝」
+	//RECT wrc = { 0,0,window_width,window_height };
+	////自動でサイズを補正する
+	//AdjustWindowRect(&wrc, WS_OVERLAPPEDWINDOW, false);
 
-	//ウィンドウオブジェクトの生成
-	HWND hwnd = CreateWindow(w.lpszClassName,	//クラス名
-		L"DirectXGame",			//タイトルバーの文字
-		WS_OVERLAPPEDWINDOW,	//標準的なウィンドウスタイル
-		CW_USEDEFAULT,			//表示X座標（OS任せ）
-		CW_USEDEFAULT,			//表示Y座標（OS任せ）
-		wrc.right - wrc.left,	//ウィンドウ横幅
-		wrc.bottom - wrc.top,	//ウィンドウ縦幅
-		nullptr,				//親ウィンドウハンドル
-		nullptr,				//メニュウハンドル
-		w.hInstance,			//呼び出しアプリケーションハンドル
-		nullptr);				//オプション
+	////ウィンドウオブジェクトの生成
+	//HWND hwnd = CreateWindow(w.lpszClassName,	//クラス名
+	//	L"DirectXGame",			//タイトルバーの文字
+	//	WS_OVERLAPPEDWINDOW,	//標準的なウィンドウスタイル
+	//	CW_USEDEFAULT,			//表示X座標（OS任せ）
+	//	CW_USEDEFAULT,			//表示Y座標（OS任せ）
+	//	wrc.right - wrc.left,	//ウィンドウ横幅
+	//	wrc.bottom - wrc.top,	//ウィンドウ縦幅
+	//	nullptr,				//親ウィンドウハンドル
+	//	nullptr,				//メニュウハンドル
+	//	w.hInstance,			//呼び出しアプリケーションハンドル
+	//	nullptr);				//オプション
 
-	//ウィンドウを表示状態にする
-	ShowWindow(hwnd, SW_SHOW);
+	////ウィンドウを表示状態にする
+	//ShowWindow(hwnd, SW_SHOW);
 
-	MSG msg{};	//メッセージ
+	//MSG msg{};	//メッセージ
 #pragma endregion WindousAPI初期化処理
 
 	//DirectX初期化処理　ここから
@@ -166,7 +163,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 	// スワップチェーンの生成
 	result = dxgiFactory->CreateSwapChainForHwnd(
-		commandQueue, hwnd, &swapChainDesc, nullptr, nullptr,
+		commandQueue, winApp->GetHwnd(), &swapChainDesc, nullptr, nullptr,
 		(IDXGISwapChain1**)&swapChain);
 	assert(SUCCEEDED(result));
 
@@ -206,8 +203,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	//リソース設定
 	D3D12_RESOURCE_DESC depthResouceDesc{};
 	depthResouceDesc.Dimension = D3D12_RESOURCE_DIMENSION_TEXTURE2D;
-	depthResouceDesc.Width = window_width;								// レンダーターゲットに合わせる
-	depthResouceDesc.Height = window_height;							//			”
+	depthResouceDesc.Width = WinApp::window_width;								// レンダーターゲットに合わせる
+	depthResouceDesc.Height = WinApp::window_height;							//			”
 	depthResouceDesc.DepthOrArraySize = 1;
 	depthResouceDesc.Format = DXGI_FORMAT_D32_FLOAT;					// 深度値フォーマット
 	depthResouceDesc.SampleDesc.Count = 1;
@@ -264,7 +261,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	result = device->CreateFence(fenceVal, D3D12_FENCE_FLAG_NONE, IID_PPV_ARGS(&fence));
 
 	input = new Input();
-	input->Initialize(w.hInstance,hwnd);
+	input->Initialize(winApp);
 
 #pragma endregion DirectX初期化処理
 	//DirectX初期化処理　ここまで
@@ -306,7 +303,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		{{ 5.0f,-5.0f,  5.0f},{}, {1.0f, 0.0f}/* 右上*/},
 
 	};
-	
+
 
 
 	//三角形生成--箱
@@ -316,7 +313,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 	triangle->Init(device);
 
-	
+
 
 
 #pragma endregion シェーダリソースビュー
@@ -334,15 +331,10 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 #pragma region ウィンドウメッセージ処理
 		//メッセージがある？
-		if (PeekMessage(&msg, nullptr, 0, 0, PM_REMOVE)) {
-			TranslateMessage(&msg);	//キー入力メッセージの処理
-			DispatchMessage(&msg);	//プロシージャにメッセージを送る		
-		}
-
-		//Xボタンで終了メッセージが来たらゲームループを抜ける
-		if (msg.message == WM_QUIT) {
+		if (winApp->ProcessMessage()) {
 			break;
 		}
+
 #pragma endregion ウィンドウメッセージ処理
 
 		//DirectX毎フレーム処理　ここから
@@ -375,7 +367,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		commandList->ClearDepthStencilView(dsvHandle, D3D12_CLEAR_FLAG_DEPTH, 1.0f, 0, 0, nullptr);
 
 
-		
+
 
 		// 更新処理
 #pragma region キーボード情報の取得
@@ -384,11 +376,11 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 #pragma endregion 更新処理
 
-		
+
 
 		triangle->Update(device, input);
 
-		
+
 
 
 
@@ -404,8 +396,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 		// ビューポート設定コマンド
 		D3D12_VIEWPORT viewport{};
-		viewport.Width = window_width;
-		viewport.Height = window_height;
+		viewport.Width = WinApp::window_width;
+		viewport.Height = WinApp::window_height;
 		viewport.TopLeftX = 0;
 		viewport.TopLeftY = 0;
 		viewport.MinDepth = 0.0f;
@@ -416,9 +408,9 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		// シザー矩形
 		D3D12_RECT scissorRect{};
 		scissorRect.left = 0;								// 切り抜き座標左
-		scissorRect.right = window_width;					// 切り抜き座標右
+		scissorRect.right = WinApp::window_width;					// 切り抜き座標右
 		scissorRect.top = 0;									// 切り抜き座標上
-		scissorRect.bottom = scissorRect.top + window_height;	// 切り抜き座標下
+		scissorRect.bottom = scissorRect.top + WinApp::window_height;	// 切り抜き座標下
 		// シザー矩形設定コマンドを、コマンドリストに積む
 		commandList->RSSetScissorRects(1, &scissorRect);
 
@@ -426,7 +418,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 		triangle->Draw(commandList);
 
-		
+
 
 
 
@@ -464,11 +456,11 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		assert(SUCCEEDED(result));
 
 	}
-	//ウィンドウクラスを登録解除
-	UnregisterClass(w.lpszClassName, w.hInstance);
+	winApp->Finalize();
 
 	delete input;
 	delete triangle;
+	delete winApp;
 
 
 

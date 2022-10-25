@@ -2,6 +2,7 @@
 #include "camera.h"
 #include "World.h"
 #include <math.h>
+#include"base/WinApp.h"
 
 
 Triangle::Triangle() {
@@ -700,7 +701,7 @@ void Triangle::Update(ID3D12Device* device, Input* input) {
 	matProjection =
 		XMMatrixPerspectiveFovLH(
 			Camera::FieldOfViewY(focalLengs,sensor),
-			(float)window_width / window_height,	// アスペクト比 （ 画面横幅/画面縦幅 ）
+			(float)WinApp::window_width / WinApp::window_height,	// アスペクト比 （ 画面横幅/画面縦幅 ）
 			0.1f, 1500.0f							// 前端、奥端
 		);
 	// ビュー変換行列
