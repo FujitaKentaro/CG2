@@ -16,46 +16,11 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	input = new Input;
 	winApp = new WinApp;
 
-	winApp->Intialize();
 
 #pragma region WindousAPI初期化処理
 
-	//コンソールへの文字出力
-	//OutputDebugStringA("Hello,DirectX!!\n");
+	winApp->Intialize();
 
-
-	////ウィンドウクラスの設定
-	//WNDCLASSEX w{};
-	//w.cbSize = sizeof(WNDCLASSEX);
-	//w.lpfnWndProc = (WNDPROC)WindowProc;		//ウィンドウプロシージャを設定
-	//w.lpszClassName = L"DirectXGame";			//ウィンドウクラス名
-	//w.hInstance = GetModuleHandle(nullptr);		//ウィンドウハンドル
-	//w.hCursor = LoadCursor(NULL, IDC_ARROW);	//カーソル指定
-
-	////ウィンドウクラスをOSに登録する
-	//RegisterClassEx(&w);
-	////ウィンドウサイズ｛　X座標　Y座標　横幅　縦幅　｝」
-	//RECT wrc = { 0,0,window_width,window_height };
-	////自動でサイズを補正する
-	//AdjustWindowRect(&wrc, WS_OVERLAPPEDWINDOW, false);
-
-	////ウィンドウオブジェクトの生成
-	//HWND hwnd = CreateWindow(w.lpszClassName,	//クラス名
-	//	L"DirectXGame",			//タイトルバーの文字
-	//	WS_OVERLAPPEDWINDOW,	//標準的なウィンドウスタイル
-	//	CW_USEDEFAULT,			//表示X座標（OS任せ）
-	//	CW_USEDEFAULT,			//表示Y座標（OS任せ）
-	//	wrc.right - wrc.left,	//ウィンドウ横幅
-	//	wrc.bottom - wrc.top,	//ウィンドウ縦幅
-	//	nullptr,				//親ウィンドウハンドル
-	//	nullptr,				//メニュウハンドル
-	//	w.hInstance,			//呼び出しアプリケーションハンドル
-	//	nullptr);				//オプション
-
-	////ウィンドウを表示状態にする
-	//ShowWindow(hwnd, SW_SHOW);
-
-	//MSG msg{};	//メッセージ
 #pragma endregion WindousAPI初期化処理
 
 	//DirectX初期化処理　ここから
@@ -330,11 +295,11 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	while (true) {
 
 #pragma region ウィンドウメッセージ処理
+
 		//メッセージがある？
 		if (winApp->ProcessMessage()) {
 			break;
 		}
-
 #pragma endregion ウィンドウメッセージ処理
 
 		//DirectX毎フレーム処理　ここから
@@ -376,14 +341,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 #pragma endregion 更新処理
 
-
-
 		triangle->Update(device, input);
-
-
-
-
-
 
 #pragma endregion DirectX毎フレーム処理
 		//DirectX毎フレーム処理　ここまで
@@ -456,6 +414,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		assert(SUCCEEDED(result));
 
 	}
+	// ウィンドウクラスを登録解除
 	winApp->Finalize();
 
 	delete input;
