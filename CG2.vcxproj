@@ -149,6 +149,7 @@
     <ClCompile Include="Input\Input.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="math\Affin.cpp" />
+    <ClCompile Include="math\ConvertXM.cpp" />
     <ClCompile Include="math\Matrix4.cpp" />
     <ClCompile Include="math\Vector2.cpp" />
     <ClCompile Include="math\Vector3.cpp" />
@@ -182,6 +183,7 @@
     <ClInclude Include="camera.h" />
     <ClInclude Include="Input\Input.h" />
     <ClInclude Include="math\Affin.h" />
+    <ClInclude Include="math\ConvertXM.h" />
     <ClInclude Include="math\Matrix4.h" />
     <ClInclude Include="math\Vector2.h" />
     <ClInclude Include="math\Vector3.h" />
