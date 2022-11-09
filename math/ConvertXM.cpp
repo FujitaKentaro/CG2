@@ -1,6 +1,6 @@
 #include "ConvertXM.h"
 
-Matrix4 ConvertXM::ConvertMat4toXMMAT(XMMATRIX XMMat) {
+Matrix4 ConvertXM::ConvertXMMATtoMat4(XMMATRIX XMMat) {
 	Matrix4 result;
 	for (int i = 0; i < 4; i++) {
 
@@ -14,7 +14,7 @@ Matrix4 ConvertXM::ConvertMat4toXMMAT(XMMATRIX XMMat) {
 	return result;
 }
 
-XMMATRIX ConvertXM::ConvertXMMATtoMat4(Matrix4 m) {
+XMMATRIX ConvertXM::ConvertMat4toXMMAT(Matrix4 m) {
 	XMMATRIX result;
 	result = XMMatrixSet(
 		m.m[0][0], m.m[0][1], m.m[0][2], m.m[0][3],
