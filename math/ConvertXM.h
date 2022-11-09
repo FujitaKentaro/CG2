@@ -8,8 +8,8 @@ class ConvertXM
 {
 
 public:
-	static Matrix4 ConvertMat4toXMMAT( XMMATRIX XMMat);
-	static XMMATRIX ConvertXMMATtoMat4(Matrix4 Mat4);
+	static Matrix4 ConvertXMMATtoMat4( XMMATRIX XMMat);
+	static XMMATRIX ConvertMat4toXMMAT(Matrix4 Mat4);
 public:
 	
 	XMMATRIX xmMat;
