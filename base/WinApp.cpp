@@ -1,5 +1,7 @@
 #include "WinApp.h"
 
+#pragma comment(lib,"winmm.lib")
+
 
 
 // 初期化
@@ -8,6 +10,8 @@ void WinApp::Intialize() {
 
 	//コンソールへの文字出力
 	//OutputDebugStringA("Hello,DirectX!!\n");
+	// システムタイマーの分解能をあげる
+	timeBeginPeriod(1);
 
 
 	//ウィンドウクラスの設定

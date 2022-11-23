@@ -6,6 +6,8 @@
 #include <d3dx12.h>
 #include <dxgi1_6.h>
 #include <wrl.h>
+#include <chrono>
+
 
 #include "base/WinApp.h"
 
@@ -29,6 +31,15 @@ public:
 
 	ID3D12Device* GetDevice() const { return device_.Get(); }
 	ID3D12GraphicsCommandList* GetCommandList() const { return commandList_.Get(); }
+
+private:	// メンバ関数
+	// FPS固定初期化
+	void InitializeFixFPS();
+	// FPS固定更新
+	void UpdateFixFPS();
+	// 記録時間（FPS固定用）
+	std::chrono::steady_clock::time_point reference_;
+
 private:
 	Microsoft::WRL::ComPtr<ID3D12Device> device_;
 	Microsoft::WRL::ComPtr<IDXGIFactory7> dxgiFactory_;

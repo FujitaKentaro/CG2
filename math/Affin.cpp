@@ -218,11 +218,11 @@ Matrix4 Affin::matWorld(Vector3 move, Vector3 rotate, Vector3 scale) {
 	Matrix4 scaleM = matScale(scale);
 	Matrix4 rotateM = matRotationZXY(rotate);
 	Matrix4 moveM = matTrans(move);
-	Matrix4 matWorld;
+	Matrix4 matWorld = matUnit();
 
-	rotateM *= scaleM;
-	moveM *= rotateM;
-	matWorld = moveM;
+	matWorld *= scaleM;
+	matWorld *= rotateM;
+	matWorld *= moveM;
 
 	return matWorld;
 }
