@@ -1,166 +1,124 @@
-#include "World.h"
-#include "Input/Input.h"
-#include "base/WinApp.h"
-#include "base/DirectXCommon.h"
-#include "object/Triangle.h"
+ï»¿
+#include "engine/base/FPS.h"
+#include "engine/base/WinApp.h"
+#include "engine/base/DirectXCommon.h"
+#include "engine/input/Input.h"
+#include "engine/3d/Object3d.h"
+#include "scene/GameScene.h"
+
+int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
+
+#pragma region WindowsAPIåˆæœŸåŒ–å‡¦ç†
 
 
-
-
-//WindousƒAƒvƒŠ‚Å‚ÌƒGƒ“ƒgƒŠ[ƒ|ƒCƒ“ƒgimainŠÖ”j
-int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
-#pragma region Šî”ÕƒVƒXƒeƒ€‚Ì‰Šú‰»
-	// ƒ|ƒCƒ“ƒ^
-	Input* input = nullptr;
+	//ãƒã‚¤ãƒ³ã‚¿
 	WinApp* winApp = nullptr;
 	DirectXCommon* dxCommon = nullptr;
+	Input* input = nullptr;
+	GameScene* gameScene = nullptr;
+	FPS* fps = new FPS;
 
-	// NEW
-	input = new Input;
-	winApp = new WinApp;
-	dxCommon = new DirectXCommon;
+	//windowsAPIã®åˆæœŸåŒ–
+	winApp = new WinApp();
+	winApp->Initialize();
 
-
-#pragma region WindousAPI‰Šú‰»ˆ—
-
-	winApp->Intialize();
-
-#pragma endregion WindousAPI‰Šú‰»ˆ—
-
-	//DirectX‰Šú‰»ˆ—@‚±‚±‚©‚ç
-
-#pragma region DirectX‰Šú‰»ˆ—
-
-#ifdef _DEBUG
-
-	//ƒfƒoƒbƒNƒŒƒCƒ„[‚ðƒIƒ“‚É
-	ID3D12Debug* debugController;
-	if (SUCCEEDED(D3D12GetDebugInterface(IID_PPV_ARGS(&debugController)))) {
-		debugController->EnableDebugLayer();
-	}
-#endif // _DEBUG
-
-//#pragma endregion DirectX‰Šú‰»ˆ—
-
+	dxCommon = new DirectXCommon();
 	dxCommon->Initialize(winApp);
 
-
+	MSG msg = {};
+	
+	//å…¥åŠ›ã®åˆæœŸåŒ–ã€€
+	input = new Input();
 	input->Initialize(winApp);
-	//DirectX‰Šú‰»ˆ—@‚±‚±‚Ü‚Å
-#pragma endregion Šî”ÕƒVƒXƒeƒ€‚Ì‰Šú‰»
 
-	//•`‰æ‰Šú‰»ˆ—@‚±‚±‚©‚ç
-#pragma region •`‰æ‰Šú‰»ˆ—
+#pragma endregion
 
-	//’¸“_
-	Vertex vertex[] = {
-		// ‘O
-		{{-5.0f,-5.0f, -5.0f},{}, {0.0f, 1.0f}/* ¶‰º*/},
-		{{-5.0f, 5.0f, -5.0f},{}, {0.0f, 0.0f}/* ¶ã*/},
-		{{ 5.0f,-5.0f, -5.0f},{}, {1.0f, 1.0f}/* ‰E‰º*/},
-		{{ 5.0f, 5.0f, -5.0f},{}, {1.0f, 0.0f}/* ‰Eã*/},
-		// Œã‚ë
-		{{-5.0f,-5.0f,  5.0f},{}, {0.0f, 1.0f}/* ¶‰º*/},
-		{{-5.0f, 5.0f,  5.0f},{}, {0.0f, 0.0f}/* ¶ã*/},
-		{{ 5.0f,-5.0f,  5.0f},{}, {1.0f, 1.0f}/* ‰E‰º*/},
-		{{ 5.0f, 5.0f,  5.0f},{}, {1.0f, 0.0f}/* ‰Eã*/},
-		// ¶
-		{{-5.0f,-5.0f, -5.0f},{}, {1.0f, 1.0f}/* ¶‰º*/},
-		{{-5.0f,-5.0f,  5.0f},{}, {0.0f, 1.0f}/* ¶ã*/},
-		{{-5.0f, 5.0f, -5.0f},{}, {1.0f, 0.0f}/* ‰E‰º*/},
-		{{-5.0f, 5.0f,  5.0f},{}, {0.0f, 0.0f}/* ‰Eã*/},
-		// ‰E
-		{{ 5.0f,-5.0f, -5.0f},{}, {1.0f, 1.0f}/* ¶‰º*/},
-		{{ 5.0f,-5.0f,  5.0f},{}, {0.0f, 1.0f}/* ¶ã*/},
-		{{ 5.0f, 5.0f, -5.0f},{}, {1.0f, 0.0f}/* ‰E‰º*/},
-		{{ 5.0f, 5.0f,  5.0f},{}, {0.0f, 0.0f}/* ‰Eã*/},
-		// ‰º
-		{{-5.0f, 5.0f, -5.0f},{}, {0.0f, 1.0f}/* ¶‰º*/},
-		{{-5.0f, 5.0f,  5.0f},{}, {0.0f, 0.0f}/* ¶ã*/},
-		{{ 5.0f, 5.0f, -5.0f},{}, {1.0f, 1.0f}/* ‰E‰º*/},
-		{{ 5.0f, 5.0f,  5.0f},{}, {1.0f, 0.0f}/* ‰Eã*/},
-		// ã
-		{{-5.0f,-5.0f, -5.0f},{}, {0.0f, 1.0f}/* ¶‰º*/},
-		{{-5.0f,-5.0f,  5.0f},{}, {0.0f, 0.0f}/* ¶ã*/},
-		{{ 5.0f,-5.0f, -5.0f},{}, {1.0f, 1.0f}/* ‰E‰º*/},
-		{{ 5.0f,-5.0f,  5.0f},{}, {1.0f, 0.0f}/* ‰Eã*/},
-
-	};
+#pragma region DirectXåˆæœŸåŒ–å‡¦ç†
+	// 3Dã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆé™çš„åˆæœŸåŒ–
+	Object3d::StaticInitialize(dxCommon->GetDevice(), WinApp::window_width, WinApp::window_height);
 
 
+#pragma endregion
 
-	//ŽOŠpŒ`¶¬--” 
-	Triangle* triangle;
+#pragma region æç”»åˆæœŸåŒ–å‡¦ç†
 
-	triangle = new Triangle(vertex);
+	////////////////////////////
+	//------éŸ³å£°èª­ã¿è¾¼ã¿--------//
+	///////////////////////////
 
-	triangle->Init(dxCommon->GetDevice());
+	// ã‚²ãƒ¼ãƒ ã‚·ãƒ¼ãƒ³ã®åˆæœŸåŒ–
+	gameScene = new GameScene();
+	gameScene->Initialize(dxCommon, input,gameScene);
 
+	//FPSå¤‰ãˆãŸã„ã¨ã
+	fps->SetFrameRate(60);
 
-#pragma endregion •`‰æ‰Šú‰»ˆ—
-	//•`‰æ‰Šú‰»ˆ—@‚±‚±‚Ü‚Å
-
-
-	//ƒQ[ƒ€ƒ‹[ƒv
+#pragma endregion
+	//ã‚²ãƒ¼ãƒ ãƒ«ãƒ¼ãƒ—
 	while (true) {
+#pragma region ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸å‡¦ç†
+	
+		//ã‚¢ãƒ—ãƒªã‚±ãƒ¼ã‚·ãƒ§ãƒ³ãŒçµ‚ã‚ã‚‹æ™‚ã«messageãŒWM_QUITã«ãªã‚‹
 
-#pragma region ƒEƒBƒ“ƒhƒEƒƒbƒZ[ƒWˆ—
-
-		//ƒƒbƒZ[ƒW‚ª‚ ‚éH
 		if (winApp->ProcessMessage()) {
 			break;
 		}
-#pragma endregion ƒEƒBƒ“ƒhƒEƒƒbƒZ[ƒWˆ—
+		if (input->PushKey(DIK_ESCAPE)) {
+			break;
+		}		
+		
+		fps->FpsControlBegin();
 
-#pragma region ƒL[ƒ{[ƒhî•ñ‚ÌŽæ“¾
+#pragma endregion
 
+#pragma region DirectXæ¯Žãƒ•ãƒ¬ãƒ¼ãƒ å‡¦ç†
+		/////////////////////////////////////////////////////
+		//----------DireceXæ¯Žãƒ•ãƒ¬ãƒ¼ãƒ å‡¦ç†ã€€ã“ã“ã‹ã‚‰------------//
+		///////////////////////////////////////////////////
+
+		//å…¥åŠ›ã®æ›´æ–°
 		input->Update();
+		// ã‚²ãƒ¼ãƒ ã‚·ãƒ¼ãƒ³ã®æ¯Žãƒ•ãƒ¬ãƒ¼ãƒ å‡¦ç†
+		gameScene->Update();
 
-#pragma endregion ƒL[ƒ{[ƒhî•ñ‚ÌŽæ“¾
+		//////////////////////////////////////////////
+		//-------DireceXæ¯Žãƒ•ãƒ¬ãƒ¼ãƒ å‡¦ç†ã€€ã“ã“ã¾ã§--------//
+		////////////////////////////////////////////
 
-		//DirectX–ˆƒtƒŒ[ƒ€ˆ—@‚±‚±‚©‚ç
-#pragma region DirectX–ˆƒtƒŒ[ƒ€ˆ—
-		// XVˆ—
+#pragma endregion
 
+#pragma region ã‚°ãƒ©ãƒ•ã‚£ãƒƒã‚¯ã‚¹ã‚³ãƒžãƒ³ãƒ‰
 
-
-
-		triangle->Update(dxCommon->GetDevice(), input);
-
-#pragma endregion DirectX–ˆƒtƒŒ[ƒ€ˆ—
-		//DirectX–ˆƒtƒŒ[ƒ€ˆ—@‚±‚±‚Ü‚Å
-
-		//---------------------------------------------------
-
-#pragma region –ˆƒtƒŒ[ƒ€•`‰æˆ—
-		// 4.•`‰æƒRƒ}ƒ“ƒh‚±‚±‚©‚ç
-		/// 
-		///	•`‰æ‘Oˆ—
-		/// 
-		dxCommon->PreDraw();
-
-
-		triangle->Draw(dxCommon->GetCommandList());
-
-
-
-		/// 
-		///	•`‰æŒãˆ—
-		/// 
+		//4.æç”»ã‚³ãƒžãƒ³ãƒ‰ã“ã“ã‹ã‚‰
+		dxCommon->PreDraw(); 
+		// ã‚²ãƒ¼ãƒ ã‚·ãƒ¼ãƒ³ã®æç”»
+		gameScene->Draw();
+		// æç”»çµ‚äº†
 		dxCommon->PostDraw();
-#pragma endregion –ˆƒtƒŒ[ƒ€•`‰æˆ—
 
+		fps->FpsControlEnd();
+		//4.æç”»ã‚³ãƒžãƒ³ãƒ‰ã“ã“ã¾ã§
+
+#pragma endregion
+
+#pragma region ç”»é¢å…¥ã‚Œæ›¿ãˆ
+
+#pragma endregion
 	}
-	// ƒEƒBƒ“ƒhƒEƒNƒ‰ƒX‚ð“o˜^‰ðœ
+#pragma region  WindowsAPIå¾Œå§‹æœ«
+
+	delete gameScene;
+	//WindowsAPIã®çµ‚äº†å‡¦ç†
 	winApp->Finalize();
 
+	//å…¥åŠ›é–‹æ”¾
 	delete input;
-	delete dxCommon;
-	delete triangle;
-	winApp->Finalize();
+	//WindowsAPIé–‹æ”¾
 	delete winApp;
-	
+	delete dxCommon;
 
+	delete fps;
 
+#pragma endregion
 	return 0;
 }
