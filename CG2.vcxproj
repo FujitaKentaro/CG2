@@ -189,7 +189,6 @@
     <ClInclude Include="engine\math\Vector3.h" />
     <ClInclude Include="engine\math\Vector4.h" />
     <ClInclude Include="scene\GameScene.h" />
-    <ClInclude Include="Vector4.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\shaders\Basic.hlsli" />
