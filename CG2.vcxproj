@@ -168,7 +168,6 @@
     <ClCompile Include="engine\math\Vector4.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="scene\GameScene.cpp" />
-    <ClCompile Include="Vector4.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="engine\2d\Sprite.h" />

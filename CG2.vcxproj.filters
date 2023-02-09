@@ -13,9 +13,6 @@
     <Filter Include="engine\audio">
       <UniqueIdentifier>{b34193d2-bda5-427c-9684-c1356a7e1268}</UniqueIdentifier>
     </Filter>
-    <Filter Include="engine\object">
-      <UniqueIdentifier>{d01c9672-fc85-4556-b618-f711ebd11035}</UniqueIdentifier>
-    </Filter>
     <Filter Include="engine\base">
       <UniqueIdentifier>{f01c214d-dd07-45b1-b549-c59c31b21b78}</UniqueIdentifier>
     </Filter>
