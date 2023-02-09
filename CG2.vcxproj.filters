@@ -98,6 +98,7 @@
       <Filter>user</Filter>
     </ClCompile>
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="Vector4.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="engine\2d\Sprite.h">
@@ -151,6 +152,7 @@
     <ClInclude Include="scene\GameScene.h">
       <Filter>user</Filter>
     </ClInclude>
+    <ClInclude Include="Vector4.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\shaders\Basic.hlsli">
