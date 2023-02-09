@@ -6,7 +6,7 @@
 //#include "WorldTransform.h"
 
 /// <summary>
-/// アフィン行列 （角度指定：度数法）
+/// アフィン行列
 /// </summary>
 namespace Affin {
 
