@@ -98,6 +98,9 @@
       <Filter>user</Filter>
     </ClCompile>
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="engine\math\Vector4.cpp">
+      <Filter>engine\math</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="engine\2d\Sprite.h">
@@ -150,6 +153,9 @@
     </ClInclude>
     <ClInclude Include="scene\GameScene.h">
       <Filter>user</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\math\Vector4.h">
+      <Filter>engine\math</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
